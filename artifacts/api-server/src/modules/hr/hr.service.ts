@@ -72,6 +72,27 @@ function workingDaysInMonth(year: number, month: number): number {
   return cnt;
 }
 
+/**
+ * If month/year is the current (incomplete) month, returns working days elapsed
+ * up to and including today. For past/future months returns full month working days.
+ */
+function effectiveWorkingDays(year: number, month: number): number {
+  const now   = new Date();
+  const nowY  = now.getFullYear();
+  const nowM  = now.getMonth() + 1;
+
+  if (year === nowY && month === nowM) {
+    const today = now.getDate();
+    let cnt = 0;
+    for (let d = 1; d <= today; d++) {
+      const dow = new Date(year, month - 1, d).getDay();
+      if (dow !== 0 && dow !== 6) cnt++;
+    }
+    return Math.max(cnt, 1);
+  }
+  return workingDaysInMonth(year, month);
+}
+
 function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
@@ -91,7 +112,7 @@ export async function getHrAnalytics(
   month:  number,
   year:   number,
 ): Promise<HrAnalyticsDto> {
-  const wDays     = workingDaysInMonth(year, month);
+  const wDays     = effectiveWorkingDays(year, month);
   const dateRange = monthDateRange(year, month);
 
   // Active employees for this shop
@@ -172,7 +193,8 @@ export async function getHrAnalytics(
 
     const mPresent = mRows.filter((r) => r.status === "present" || r.status === "late").length;
     const mAbsent  = mRows.filter((r) => r.status === "absent").length;
-    const mSlots   = Math.max(empCount, 1) * Math.max(mw, 1);
+    const effMw    = effectiveWorkingDays(y, m);
+    const mSlots   = Math.max(empCount, 1) * Math.max(effMw, 1);
     const mRate    = Math.round((mPresent / mSlots) * 100 * 10) / 10;
 
     monthlyTrend.push({ month: m, year: y, presentDays: mPresent, absentDays: mAbsent, attendanceRate: mRate });
