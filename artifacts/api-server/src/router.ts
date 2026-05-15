@@ -1,0 +1,48 @@
+import { Router, type IRouter } from "express";
+import authRouter from "./modules/auth/auth.router";
+import productsRouter from "./modules/products/products.router";
+import categoriesRouter from "./modules/categories/categories.router";
+import customersRouter from "./modules/customers/customers.router";
+import salesRouter from "./modules/sales/sales.router";
+import inventoryRouter from "./modules/inventory/inventory.router";
+import dashboardRouter from "./modules/dashboard/dashboard.router";
+import reportsRouter from "./modules/reports/reports.router";
+import healthRouter from "./modules/health/health.router";
+import notificationsRouter from "./modules/notifications/notifications.router";
+import suppliersRouter from "./modules/suppliers/suppliers.router";
+import purchasesRouter from "./modules/purchases/purchases.router";
+import auditLogsRouter from "./modules/audit-logs/audit-logs.router";
+import permissionsRouter from "./modules/permissions/permissions.router";
+import employeesRouter from "./modules/employees/employees.router";
+import userAccessRouter from "./modules/user-access/user-access.router";
+import attendanceRouter from "./modules/attendance/attendance.router";
+import schedulesRouter from "./modules/schedules/schedules.router";
+import leavesRouter   from "./modules/leaves/leaves.router";
+import payrollRouter       from "./modules/payroll/payroll.router";
+import salaryGradesRouter  from "./modules/salary-grades/salary-grades.router";
+
+const router: IRouter = Router();
+
+router.use(healthRouter);
+router.use(authRouter);
+router.use(productsRouter);
+router.use(categoriesRouter);
+router.use(customersRouter);
+router.use(salesRouter);
+router.use(inventoryRouter);
+router.use(dashboardRouter);
+router.use(reportsRouter);
+router.use(notificationsRouter);
+router.use(suppliersRouter);
+router.use(purchasesRouter);
+router.use(auditLogsRouter);
+router.use(permissionsRouter);
+router.use(employeesRouter);
+router.use(userAccessRouter);
+router.use(attendanceRouter);
+router.use(schedulesRouter);
+router.use(leavesRouter);
+router.use(payrollRouter);
+router.use(salaryGradesRouter);
+
+export default router;

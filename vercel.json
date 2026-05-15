@@ -1,0 +1,46 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "version": 2,
+
+  "buildCommand":      "pnpm run build:frontend",
+  "outputDirectory":   "artifacts/dokan360/dist/public",
+  "installCommand":    "pnpm install --frozen-lockfile",
+  "devCommand":        "PORT=5000 BASE_PATH=/ pnpm --filter @workspace/dokan360 run dev",
+  "framework":         null,
+
+  "rewrites": [
+    {
+      "source":      "/api/(.*)",
+      "destination": "https://YOUR_BACKEND_URL/api/$1"
+    },
+    {
+      "source":      "/((?!api).*)",
+      "destination": "/index.html"
+    }
+  ],
+
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options",         "value": "DENY" },
+        { "key": "Referrer-Policy",          "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
+
+  "env": {
+    "VITE_API_URL":        "@dokan360_api_url",
+    "VITE_PUBLIC_URL":     "@dokan360_public_url",
+    "SUPABASE_URL":        "@supabase_url",
+    "SUPABASE_ANON_KEY":   "@supabase_anon_key"
+  }
+}

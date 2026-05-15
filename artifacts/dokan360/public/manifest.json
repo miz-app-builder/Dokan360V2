@@ -1,0 +1,57 @@
+{
+  "name": "দোকান ৩৬০",
+  "short_name": "Dokan360",
+  "description": "বাংলাদেশের দোকানদারদের জন্য সম্পূর্ণ বাংলা ভাষায় বিক্রয় ব্যবস্থাপনা সফটওয়্যার",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#7240E7",
+  "background_color": "#ffffff",
+  "lang": "bn",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "180x180",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/opengraph.jpg",
+      "type": "image/jpeg",
+      "sizes": "1200x630",
+      "form_factor": "wide",
+      "label": "দোকান ৩৬০ ড্যাশবোর্ড"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "POS — বিক্রয়",
+      "short_name": "POS",
+      "url": "/pos",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "ড্যাশবোর্ড",
+      "short_name": "Dashboard",
+      "url": "/",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}

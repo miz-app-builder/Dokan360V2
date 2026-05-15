@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /pos
+Disallow: /products
+Disallow: /inventory
+Disallow: /customers
+Disallow: /sales
+Disallow: /reports
+Disallow: /settings
+
+Sitemap: __PUBLIC_URL__/sitemap.xml
