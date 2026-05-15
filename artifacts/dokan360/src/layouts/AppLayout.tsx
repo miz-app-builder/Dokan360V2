@@ -46,7 +46,9 @@ import {
   Banknote,
   GraduationCap,
   BarChart2,
+  Users2,
 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -78,16 +80,21 @@ const NAV_KEYS = [
   { href: "/suppliers",  key: "nav.suppliers",  icon: Truck,           subtitleKey: "suppliers.subtitle",  iconBg: "bg-blue-500/15",    iconText: "text-blue-600 dark:text-blue-400" },
   { href: "/purchases",  key: "nav.purchases",  icon: ShoppingBag,     subtitleKey: "purchases.subtitle",  iconBg: "bg-violet-500/15",  iconText: "text-violet-600 dark:text-violet-400" },
   { href: "/reports",    key: "nav.reports",    icon: BarChart,        subtitleKey: "reports.subtitle",    iconBg: "bg-cyan-500/15",    iconText: "text-cyan-600 dark:text-cyan-400" },
-  { href: "/employees",  key: "nav.employees",  icon: UserCog,         subtitleKey: "employees.subtitle",   iconBg: "bg-indigo-500/15",  iconText: "text-indigo-600 dark:text-indigo-400" },
-  { href: "/attendance", key: "nav.attendance", icon: CalendarCheck,   subtitleKey: "attendance.subtitle",  iconBg: "bg-teal-500/15",    iconText: "text-teal-600 dark:text-teal-400" },
-  { href: "/schedule",   key: "nav.schedule",   icon: CalendarDays,    subtitleKey: "schedule.subtitle",    iconBg: "bg-amber-500/15",   iconText: "text-amber-600 dark:text-amber-400" },
-  { href: "/leaves",     key: "nav.leaves",     icon: Umbrella,        subtitleKey: "leaves.subtitle",      iconBg: "bg-emerald-500/15", iconText: "text-emerald-600 dark:text-emerald-400" },
-  { href: "/payroll",       key: "nav.payroll",       icon: Banknote,       subtitleKey: "payroll.subtitle",      iconBg: "bg-yellow-500/15",  iconText: "text-yellow-600 dark:text-yellow-400" },
-  { href: "/salary-grades",  key: "nav.salaryGrades",  icon: GraduationCap, subtitleKey: "salaryGrades.subtitle",  iconBg: "bg-lime-500/15",    iconText: "text-lime-600 dark:text-lime-400" },
-  { href: "/hr-analytics",   key: "nav.hrAnalytics",   icon: BarChart2,     subtitleKey: "hrAnalytics.subtitle",   iconBg: "bg-violet-500/15",  iconText: "text-violet-600 dark:text-violet-400" },
-  { href: "/audit-logs",    key: "nav.auditLogs",    icon: ShieldCheck,    subtitleKey: "auditLogs.subtitle",    iconBg: "bg-slate-500/15",   iconText: "text-slate-600 dark:text-slate-400" },
+  { href: "/audit-logs", key: "nav.auditLogs",  icon: ShieldCheck,     subtitleKey: "auditLogs.subtitle",  iconBg: "bg-slate-500/15",   iconText: "text-slate-600 dark:text-slate-400" },
   { href: "/settings",   key: "nav.settings",   icon: Settings,        subtitleKey: "settings.subtitle",   iconBg: "bg-slate-500/15",   iconText: "text-slate-600 dark:text-slate-400" },
 ];
+
+const HR_NAV_KEYS = [
+  { href: "/employees",     key: "nav.employees",    icon: UserCog,      subtitleKey: "employees.subtitle",    iconBg: "bg-indigo-500/15",  iconText: "text-indigo-600 dark:text-indigo-400" },
+  { href: "/attendance",    key: "nav.attendance",   icon: CalendarCheck, subtitleKey: "attendance.subtitle",  iconBg: "bg-teal-500/15",    iconText: "text-teal-600 dark:text-teal-400" },
+  { href: "/schedule",      key: "nav.schedule",     icon: CalendarDays,  subtitleKey: "schedule.subtitle",    iconBg: "bg-amber-500/15",   iconText: "text-amber-600 dark:text-amber-400" },
+  { href: "/leaves",        key: "nav.leaves",       icon: Umbrella,      subtitleKey: "leaves.subtitle",      iconBg: "bg-emerald-500/15", iconText: "text-emerald-600 dark:text-emerald-400" },
+  { href: "/payroll",       key: "nav.payroll",      icon: Banknote,      subtitleKey: "payroll.subtitle",     iconBg: "bg-yellow-500/15",  iconText: "text-yellow-600 dark:text-yellow-400" },
+  { href: "/salary-grades", key: "nav.salaryGrades", icon: GraduationCap, subtitleKey: "salaryGrades.subtitle", iconBg: "bg-lime-500/15",  iconText: "text-lime-600 dark:text-lime-400" },
+  { href: "/hr-analytics",  key: "nav.hrAnalytics",  icon: BarChart2,     subtitleKey: "hrAnalytics.subtitle", iconBg: "bg-violet-500/15", iconText: "text-violet-600 dark:text-violet-400" },
+];
+
+const ALL_NAV_KEYS = [...NAV_KEYS, ...HR_NAV_KEYS];
 
 const BOTTOM_NAV_KEYS = [
   { href: "/",          key: "nav.home",      icon: LayoutDashboard },
@@ -98,6 +105,47 @@ const BOTTOM_NAV_KEYS = [
 
 function isActive(href: string, location: string) {
   return href === "/" ? location === "/" : location.startsWith(href);
+}
+
+/* ─── HR Collapsible Nav Group ───────────────────────────────── */
+function HrNavGroup({ location, t }: { location: string; t: (key: string) => string }) {
+  const isHrActive = HR_NAV_KEYS.some((n) => isActive(n.href, location));
+  return (
+    <Collapsible defaultOpen={isHrActive} className="w-full mt-px">
+      <CollapsibleTrigger asChild>
+        <button className={`group w-full flex items-center gap-2.5 h-9 px-2.5 rounded-xl text-sm transition-all duration-150
+          ${isHrActive
+            ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold"
+            : "text-sidebar-foreground/65 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+          }`}
+        >
+          <Users2 className="h-4 w-4 shrink-0" />
+          <span className="flex-1 text-left">{t("nav.hrModule")}</span>
+          {isHrActive && <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0 mr-1" />}
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="mt-0.5 ml-3 pl-3 border-l border-sidebar-border/60 space-y-px">
+        {HR_NAV_KEYS.map(({ href, key, icon: Icon }) => {
+          const active = isActive(href, location);
+          return (
+            <Link key={href} href={href}>
+              <div className={`flex items-center gap-2 h-8 px-2 rounded-lg text-sm transition-all duration-150 cursor-pointer
+                ${active
+                  ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-semibold"
+                  : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5 shrink-0" />
+                <span>{t(key)}</span>
+                {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />}
+              </div>
+            </Link>
+          );
+        })}
+      </CollapsibleContent>
+    </Collapsible>
+  );
 }
 
 /* ─── Theme Toggle ───────────────────────────────────────────── */
@@ -236,6 +284,9 @@ function MobileSheetMenu() {
               </Link>
             );
           })}
+
+          {/* ── HR Collapsible Group (mobile) ── */}
+          <HrNavGroup location={location} t={t} />
         </nav>
 
         <div className="px-3 py-4 border-t border-border/50 bg-sidebar">
@@ -311,7 +362,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
   if (!user) return <>{children}</>;
 
-  const activeNav = NAV_KEYS.find((n) => isActive(n.href, location)) ?? NAV_KEYS[0];
+  const activeNav = ALL_NAV_KEYS.find((n) => isActive(n.href, location)) ?? ALL_NAV_KEYS[0];
   const { subtitle } = usePageSubtitle();
 
   return (
@@ -363,7 +414,11 @@ export function AppLayout({ children }: { children: ReactNode }) {
                       </SidebarMenuItem>
                     );
                   })}
+
                 </SidebarMenu>
+
+                {/* ── HR Collapsible Group — outside ul to keep valid DOM ── */}
+                <HrNavGroup location={location} t={t} />
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>

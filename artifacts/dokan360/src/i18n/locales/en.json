@@ -20,7 +20,8 @@
     "leaves": "Leave Management",
     "payroll": "Payroll",
     "salaryGrades": "Salary Grades",
-    "hrAnalytics": "HR Analytics"
+    "hrAnalytics": "HR Analytics",
+    "hrModule": "Human Resources"
   },
   "theme": {
     "toggle": "Toggle theme",

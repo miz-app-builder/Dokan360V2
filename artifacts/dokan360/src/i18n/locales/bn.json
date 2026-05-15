@@ -20,7 +20,8 @@
     "leaves": "ছুটি ব্যবস্থাপনা",
     "payroll": "বেতন ব্যবস্থাপনা",
     "salaryGrades": "বেতন গ্রেড",
-    "hrAnalytics": "HR বিশ্লেষণ"
+    "hrAnalytics": "HR বিশ্লেষণ",
+    "hrModule": "মানব সম্পদ"
   },
   "theme": {
     "toggle": "থিম পরিবর্তন",
