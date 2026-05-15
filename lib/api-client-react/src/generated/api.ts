@@ -58,6 +58,7 @@ import type {
   GetCalendarScheduleParams,
   GetDashboardAnalyticsParams,
   GetEmployeePayrollHistoryParams,
+  GetHrAnalyticsParams,
   GetPayrollStatsParams,
   GetProductReportParams,
   GetProfitReportParams,
@@ -65,6 +66,7 @@ import type {
   GetStaffReportParams,
   HealthStatus,
   HeatmapPoint,
+  HrAnalytics,
   InventoryAdjustment,
   InventoryItem,
   InventoryReport,
@@ -8929,6 +8931,100 @@ export function useListPayroll<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getListPayrollQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary HR Analytics — attendance, payroll, leave summary for a month
+ */
+export const getGetHrAnalyticsUrl = (params: GetHrAnalyticsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/hr/analytics?${stringifiedParams}`
+    : `/api/hr/analytics`;
+};
+
+export const getHrAnalytics = async (
+  params: GetHrAnalyticsParams,
+  options?: RequestInit,
+): Promise<HrAnalytics> => {
+  return customFetch<HrAnalytics>(getGetHrAnalyticsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetHrAnalyticsQueryKey = (params?: GetHrAnalyticsParams) => {
+  return [`/api/hr/analytics`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetHrAnalyticsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getHrAnalytics>>,
+  TError = ErrorType<unknown>,
+>(
+  params: GetHrAnalyticsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getHrAnalytics>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetHrAnalyticsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getHrAnalytics>>> = ({
+    signal,
+  }) => getHrAnalytics(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getHrAnalytics>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetHrAnalyticsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getHrAnalytics>>
+>;
+export type GetHrAnalyticsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary HR Analytics — attendance, payroll, leave summary for a month
+ */
+
+export function useGetHrAnalytics<
+  TData = Awaited<ReturnType<typeof getHrAnalytics>>,
+  TError = ErrorType<unknown>,
+>(
+  params: GetHrAnalyticsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getHrAnalytics>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetHrAnalyticsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

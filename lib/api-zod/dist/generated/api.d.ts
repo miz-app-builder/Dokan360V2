@@ -5486,6 +5486,292 @@ export declare const ListPayrollResponse: zod.ZodArray<zod.ZodObject<{
     paidAt?: string | null | undefined;
 }>, "many">;
 /**
+ * @summary HR Analytics — attendance, payroll, leave summary for a month
+ */
+export declare const getHrAnalyticsQueryMonthMax = 12;
+export declare const getHrAnalyticsQueryYearMin = 2020;
+export declare const GetHrAnalyticsQueryParams: zod.ZodObject<{
+    month: zod.ZodNumber;
+    year: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    month: number;
+    year: number;
+}, {
+    month: number;
+    year: number;
+}>;
+export declare const GetHrAnalyticsResponse: zod.ZodObject<{
+    month: zod.ZodNumber;
+    year: zod.ZodNumber;
+    totalActiveEmployees: zod.ZodNumber;
+    attendance: zod.ZodObject<{
+        totalPresent: zod.ZodNumber;
+        totalAbsent: zod.ZodNumber;
+        totalLate: zod.ZodNumber;
+        totalHalfDay: zod.ZodNumber;
+        attendanceRate: zod.ZodNumber;
+        avgLateMinutes: zod.ZodNumber;
+        avgOvertimeMinutes: zod.ZodNumber;
+        monthlyTrend: zod.ZodArray<zod.ZodObject<{
+            month: zod.ZodNumber;
+            year: zod.ZodNumber;
+            presentDays: zod.ZodNumber;
+            absentDays: zod.ZodNumber;
+            attendanceRate: zod.ZodNumber;
+        }, "strip", zod.ZodTypeAny, {
+            month: number;
+            year: number;
+            presentDays: number;
+            absentDays: number;
+            attendanceRate: number;
+        }, {
+            month: number;
+            year: number;
+            presentDays: number;
+            absentDays: number;
+            attendanceRate: number;
+        }>, "many">;
+    }, "strip", zod.ZodTypeAny, {
+        totalPresent: number;
+        totalAbsent: number;
+        totalLate: number;
+        totalHalfDay: number;
+        attendanceRate: number;
+        avgLateMinutes: number;
+        avgOvertimeMinutes: number;
+        monthlyTrend: {
+            month: number;
+            year: number;
+            presentDays: number;
+            absentDays: number;
+            attendanceRate: number;
+        }[];
+    }, {
+        totalPresent: number;
+        totalAbsent: number;
+        totalLate: number;
+        totalHalfDay: number;
+        attendanceRate: number;
+        avgLateMinutes: number;
+        avgOvertimeMinutes: number;
+        monthlyTrend: {
+            month: number;
+            year: number;
+            presentDays: number;
+            absentDays: number;
+            attendanceRate: number;
+        }[];
+    }>;
+    payroll: zod.ZodObject<{
+        totalGross: zod.ZodNumber;
+        totalNet: zod.ZodNumber;
+        avgNet: zod.ZodNumber;
+        paidCount: zod.ZodNumber;
+        unpaidCount: zod.ZodNumber;
+        totalOvertimePay: zod.ZodNumber;
+    }, "strip", zod.ZodTypeAny, {
+        totalGross: number;
+        totalNet: number;
+        avgNet: number;
+        paidCount: number;
+        unpaidCount: number;
+        totalOvertimePay: number;
+    }, {
+        totalGross: number;
+        totalNet: number;
+        avgNet: number;
+        paidCount: number;
+        unpaidCount: number;
+        totalOvertimePay: number;
+    }>;
+    leave: zod.ZodObject<{
+        totalRequests: zod.ZodNumber;
+        pending: zod.ZodNumber;
+        approved: zod.ZodNumber;
+        rejected: zod.ZodNumber;
+        byType: zod.ZodArray<zod.ZodObject<{
+            leaveTypeName: zod.ZodString;
+            count: zod.ZodNumber;
+        }, "strip", zod.ZodTypeAny, {
+            count: number;
+            leaveTypeName: string;
+        }, {
+            count: number;
+            leaveTypeName: string;
+        }>, "many">;
+    }, "strip", zod.ZodTypeAny, {
+        pending: number;
+        approved: number;
+        rejected: number;
+        totalRequests: number;
+        byType: {
+            count: number;
+            leaveTypeName: string;
+        }[];
+    }, {
+        pending: number;
+        approved: number;
+        rejected: number;
+        totalRequests: number;
+        byType: {
+            count: number;
+            leaveTypeName: string;
+        }[];
+    }>;
+    topPerformers: zod.ZodArray<zod.ZodObject<{
+        employeeId: zod.ZodNumber;
+        name: zod.ZodString;
+        attendancePercent: zod.ZodNumber;
+        presentDays: zod.ZodNumber;
+        workingDays: zod.ZodNumber;
+        lateMinutes: zod.ZodNumber;
+    }, "strip", zod.ZodTypeAny, {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }, {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }>, "many">;
+    lateLeaders: zod.ZodArray<zod.ZodObject<{
+        employeeId: zod.ZodNumber;
+        name: zod.ZodString;
+        attendancePercent: zod.ZodNumber;
+        presentDays: zod.ZodNumber;
+        workingDays: zod.ZodNumber;
+        lateMinutes: zod.ZodNumber;
+    }, "strip", zod.ZodTypeAny, {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }, {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }>, "many">;
+}, "strip", zod.ZodTypeAny, {
+    month: number;
+    leave: {
+        pending: number;
+        approved: number;
+        rejected: number;
+        totalRequests: number;
+        byType: {
+            count: number;
+            leaveTypeName: string;
+        }[];
+    };
+    year: number;
+    totalActiveEmployees: number;
+    attendance: {
+        totalPresent: number;
+        totalAbsent: number;
+        totalLate: number;
+        totalHalfDay: number;
+        attendanceRate: number;
+        avgLateMinutes: number;
+        avgOvertimeMinutes: number;
+        monthlyTrend: {
+            month: number;
+            year: number;
+            presentDays: number;
+            absentDays: number;
+            attendanceRate: number;
+        }[];
+    };
+    payroll: {
+        totalGross: number;
+        totalNet: number;
+        avgNet: number;
+        paidCount: number;
+        unpaidCount: number;
+        totalOvertimePay: number;
+    };
+    topPerformers: {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }[];
+    lateLeaders: {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }[];
+}, {
+    month: number;
+    leave: {
+        pending: number;
+        approved: number;
+        rejected: number;
+        totalRequests: number;
+        byType: {
+            count: number;
+            leaveTypeName: string;
+        }[];
+    };
+    year: number;
+    totalActiveEmployees: number;
+    attendance: {
+        totalPresent: number;
+        totalAbsent: number;
+        totalLate: number;
+        totalHalfDay: number;
+        attendanceRate: number;
+        avgLateMinutes: number;
+        avgOvertimeMinutes: number;
+        monthlyTrend: {
+            month: number;
+            year: number;
+            presentDays: number;
+            absentDays: number;
+            attendanceRate: number;
+        }[];
+    };
+    payroll: {
+        totalGross: number;
+        totalNet: number;
+        avgNet: number;
+        paidCount: number;
+        unpaidCount: number;
+        totalOvertimePay: number;
+    };
+    topPerformers: {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }[];
+    lateLeaders: {
+        name: string;
+        employeeId: number;
+        lateMinutes: number;
+        workingDays: number;
+        presentDays: number;
+        attendancePercent: number;
+    }[];
+}>;
+/**
  * @summary Payroll stats for a month/year
  */
 export declare const getPayrollStatsQueryMonthMax = 12;
@@ -5514,22 +5800,22 @@ export declare const GetPayrollStatsResponse: zod.ZodObject<{
     month: number;
     totalPaid: number;
     year: number;
-    totalEmployees: number;
     totalGross: number;
     totalNet: number;
-    totalUnpaid: number;
     paidCount: number;
     unpaidCount: number;
+    totalEmployees: number;
+    totalUnpaid: number;
 }, {
     month: number;
     totalPaid: number;
     year: number;
-    totalEmployees: number;
     totalGross: number;
     totalNet: number;
-    totalUnpaid: number;
     paidCount: number;
     unpaidCount: number;
+    totalEmployees: number;
+    totalUnpaid: number;
 }>;
 /**
  * @summary Generate payroll for all active employees for a month

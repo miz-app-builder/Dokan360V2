@@ -324,12 +324,12 @@
 - [x] SalaryGrades.tsx page with grade cards + percent bars + example calculation
 - [x] bilingual UI (EN/BN) — all i18n keys in bn.json + en.json
 
-### TASK 43 — HR Analytics Dashboard
-- [ ] attendance analytics
-- [ ] salary analytics
-- [ ] employee performance
-- [ ] late statistics
-- [ ] leave analytics
+### TASK 43 — HR Analytics Dashboard ✅ COMPLETE
+- [x] attendance analytics (present/absent/late/halfDay totals, rate %, 6-month trend chart)
+- [x] salary analytics (total gross/net, avg net, overtime, paid/unpaid pie chart)
+- [x] employee performance (top 5 performers by attendance %, progress bars)
+- [x] late statistics (top 5 late employees by total late minutes)
+- [x] leave analytics (total requests, pending/approved/rejected bar chart, by-type breakdown)
 
 ### TASK 44 — Employee Activity Logs
 - [ ] login / logout

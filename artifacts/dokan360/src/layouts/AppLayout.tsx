@@ -45,6 +45,7 @@ import {
   Umbrella,
   Banknote,
   GraduationCap,
+  BarChart2,
 } from "lucide-react";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { Button } from "@/components/ui/button";
@@ -82,7 +83,8 @@ const NAV_KEYS = [
   { href: "/schedule",   key: "nav.schedule",   icon: CalendarDays,    subtitleKey: "schedule.subtitle",    iconBg: "bg-amber-500/15",   iconText: "text-amber-600 dark:text-amber-400" },
   { href: "/leaves",     key: "nav.leaves",     icon: Umbrella,        subtitleKey: "leaves.subtitle",      iconBg: "bg-emerald-500/15", iconText: "text-emerald-600 dark:text-emerald-400" },
   { href: "/payroll",       key: "nav.payroll",       icon: Banknote,       subtitleKey: "payroll.subtitle",      iconBg: "bg-yellow-500/15",  iconText: "text-yellow-600 dark:text-yellow-400" },
-  { href: "/salary-grades", key: "nav.salaryGrades", icon: GraduationCap,  subtitleKey: "salaryGrades.subtitle", iconBg: "bg-lime-500/15",    iconText: "text-lime-600 dark:text-lime-400" },
+  { href: "/salary-grades",  key: "nav.salaryGrades",  icon: GraduationCap, subtitleKey: "salaryGrades.subtitle",  iconBg: "bg-lime-500/15",    iconText: "text-lime-600 dark:text-lime-400" },
+  { href: "/hr-analytics",   key: "nav.hrAnalytics",   icon: BarChart2,     subtitleKey: "hrAnalytics.subtitle",   iconBg: "bg-violet-500/15",  iconText: "text-violet-600 dark:text-violet-400" },
   { href: "/audit-logs",    key: "nav.auditLogs",    icon: ShieldCheck,    subtitleKey: "auditLogs.subtitle",    iconBg: "bg-slate-500/15",   iconText: "text-slate-600 dark:text-slate-400" },
   { href: "/settings",   key: "nav.settings",   icon: Settings,        subtitleKey: "settings.subtitle",   iconBg: "bg-slate-500/15",   iconText: "text-slate-600 dark:text-slate-400" },
 ];

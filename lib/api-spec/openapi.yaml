@@ -44,6 +44,8 @@ tags:
     description: Employee leave management
   - name: payroll
     description: Payroll and salary management
+  - name: hr
+    description: HR analytics and reporting
 
 paths:
   /healthz:
@@ -2380,6 +2382,28 @@ paths:
                 items:
                   $ref: "#/components/schemas/PayrollRecord"
 
+  /hr/analytics:
+    get:
+      operationId: getHrAnalytics
+      tags: [hr]
+      summary: HR Analytics — attendance, payroll, leave summary for a month
+      parameters:
+        - in: query
+          name: month
+          required: true
+          schema: { type: integer, minimum: 1, maximum: 12 }
+        - in: query
+          name: year
+          required: true
+          schema: { type: integer, minimum: 2020 }
+      responses:
+        "200":
+          description: HR analytics data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HrAnalytics"
+
   /payroll/stats:
     get:
       operationId: getPayrollStats
@@ -4607,3 +4631,80 @@ components:
         transportPercent: { type: number, minimum: 0, maximum: 100 }
         foodPercent:      { type: number, minimum: 0, maximum: 100 }
         otherPercent:     { type: number, minimum: 0, maximum: 100 }
+
+    HrAnalyticsAttendanceTrend:
+      type: object
+      properties:
+        month:          { type: integer }
+        year:           { type: integer }
+        presentDays:    { type: integer }
+        absentDays:     { type: integer }
+        attendanceRate: { type: number }
+      required: [month, year, presentDays, absentDays, attendanceRate]
+
+    HrAnalyticsEmployeeRow:
+      type: object
+      properties:
+        employeeId:        { type: integer }
+        name:              { type: string }
+        attendancePercent: { type: number }
+        presentDays:       { type: integer }
+        workingDays:       { type: integer }
+        lateMinutes:       { type: integer }
+      required: [employeeId, name, attendancePercent, presentDays, workingDays, lateMinutes]
+
+    HrAnalyticsLeaveByType:
+      type: object
+      properties:
+        leaveTypeName: { type: string }
+        count:         { type: integer }
+      required: [leaveTypeName, count]
+
+    HrAnalytics:
+      type: object
+      properties:
+        month:                { type: integer }
+        year:                 { type: integer }
+        totalActiveEmployees: { type: integer }
+        attendance:
+          type: object
+          properties:
+            totalPresent:       { type: integer }
+            totalAbsent:        { type: integer }
+            totalLate:          { type: integer }
+            totalHalfDay:       { type: integer }
+            attendanceRate:     { type: number }
+            avgLateMinutes:     { type: number }
+            avgOvertimeMinutes: { type: number }
+            monthlyTrend:
+              type: array
+              items: { $ref: "#/components/schemas/HrAnalyticsAttendanceTrend" }
+          required: [totalPresent, totalAbsent, totalLate, totalHalfDay, attendanceRate, avgLateMinutes, avgOvertimeMinutes, monthlyTrend]
+        payroll:
+          type: object
+          properties:
+            totalGross:      { type: number }
+            totalNet:        { type: number }
+            avgNet:          { type: number }
+            paidCount:       { type: integer }
+            unpaidCount:     { type: integer }
+            totalOvertimePay: { type: number }
+          required: [totalGross, totalNet, avgNet, paidCount, unpaidCount, totalOvertimePay]
+        leave:
+          type: object
+          properties:
+            totalRequests: { type: integer }
+            pending:       { type: integer }
+            approved:      { type: integer }
+            rejected:      { type: integer }
+            byType:
+              type: array
+              items: { $ref: "#/components/schemas/HrAnalyticsLeaveByType" }
+          required: [totalRequests, pending, approved, rejected, byType]
+        topPerformers:
+          type: array
+          items: { $ref: "#/components/schemas/HrAnalyticsEmployeeRow" }
+        lateLeaders:
+          type: array
+          items: { $ref: "#/components/schemas/HrAnalyticsEmployeeRow" }
+      required: [month, year, totalActiveEmployees, attendance, payroll, leave, topPerformers, lateLeaders]

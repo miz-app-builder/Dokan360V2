@@ -2084,6 +2084,82 @@ export const ListPayrollResponseItem = zod.object({
 export const ListPayrollResponse = zod.array(ListPayrollResponseItem);
 
 /**
+ * @summary HR Analytics — attendance, payroll, leave summary for a month
+ */
+export const getHrAnalyticsQueryMonthMax = 12;
+
+export const getHrAnalyticsQueryYearMin = 2020;
+
+export const GetHrAnalyticsQueryParams = zod.object({
+  month: zod.coerce.number().min(1).max(getHrAnalyticsQueryMonthMax),
+  year: zod.coerce.number().min(getHrAnalyticsQueryYearMin),
+});
+
+export const GetHrAnalyticsResponse = zod.object({
+  month: zod.number(),
+  year: zod.number(),
+  totalActiveEmployees: zod.number(),
+  attendance: zod.object({
+    totalPresent: zod.number(),
+    totalAbsent: zod.number(),
+    totalLate: zod.number(),
+    totalHalfDay: zod.number(),
+    attendanceRate: zod.number(),
+    avgLateMinutes: zod.number(),
+    avgOvertimeMinutes: zod.number(),
+    monthlyTrend: zod.array(
+      zod.object({
+        month: zod.number(),
+        year: zod.number(),
+        presentDays: zod.number(),
+        absentDays: zod.number(),
+        attendanceRate: zod.number(),
+      }),
+    ),
+  }),
+  payroll: zod.object({
+    totalGross: zod.number(),
+    totalNet: zod.number(),
+    avgNet: zod.number(),
+    paidCount: zod.number(),
+    unpaidCount: zod.number(),
+    totalOvertimePay: zod.number(),
+  }),
+  leave: zod.object({
+    totalRequests: zod.number(),
+    pending: zod.number(),
+    approved: zod.number(),
+    rejected: zod.number(),
+    byType: zod.array(
+      zod.object({
+        leaveTypeName: zod.string(),
+        count: zod.number(),
+      }),
+    ),
+  }),
+  topPerformers: zod.array(
+    zod.object({
+      employeeId: zod.number(),
+      name: zod.string(),
+      attendancePercent: zod.number(),
+      presentDays: zod.number(),
+      workingDays: zod.number(),
+      lateMinutes: zod.number(),
+    }),
+  ),
+  lateLeaders: zod.array(
+    zod.object({
+      employeeId: zod.number(),
+      name: zod.string(),
+      attendancePercent: zod.number(),
+      presentDays: zod.number(),
+      workingDays: zod.number(),
+      lateMinutes: zod.number(),
+    }),
+  ),
+});
+
+/**
  * @summary Payroll stats for a month/year
  */
 export const getPayrollStatsQueryMonthMax = 12;

@@ -20,6 +20,7 @@ import schedulesRouter from "./modules/schedules/schedules.router";
 import leavesRouter   from "./modules/leaves/leaves.router";
 import payrollRouter       from "./modules/payroll/payroll.router";
 import salaryGradesRouter  from "./modules/salary-grades/salary-grades.router";
+import hrRouter            from "./modules/hr/hr.router";
 
 const router: IRouter = Router();
 
@@ -44,5 +45,6 @@ router.use(schedulesRouter);
 router.use(leavesRouter);
 router.use(payrollRouter);
 router.use(salaryGradesRouter);
+router.use(hrRouter);
 
 export default router;

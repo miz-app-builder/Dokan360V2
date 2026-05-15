@@ -19,7 +19,8 @@
     "schedule": "Duty Schedule",
     "leaves": "Leave Management",
     "payroll": "Payroll",
-    "salaryGrades": "Salary Grades"
+    "salaryGrades": "Salary Grades",
+    "hrAnalytics": "HR Analytics"
   },
   "theme": {
     "toggle": "Toggle theme",
@@ -1230,6 +1231,61 @@
     "gradeNotAssigned": "No grade",
     "systemBadge": "System",
     "systemBadgeTitle": "This is a system default grade. Editing it will create a shop-specific copy."
+  },
+  "hrAnalytics": {
+    "title": "HR Analytics Dashboard",
+    "subtitle": "Combined insights on attendance, payroll, and leave",
+    "min": " min",
+    "noData": "No data for this month",
+    "noEmployees": "No active employees",
+    "noEmployeesSub": "Add employees and record attendance to see insights",
+    "loadError": "Failed to load data. Please try again.",
+    "tiles": {
+      "totalEmployees": "Active Employees",
+      "active": "active",
+      "attendanceRate": "Attendance Rate",
+      "thisMonth": "this month",
+      "totalNet": "Total Net Salary",
+      "leaveRequests": "Leave Requests"
+    },
+    "attendance": {
+      "title": "Attendance Analytics",
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late",
+      "halfDay": "Half Day",
+      "rate": "Attendance Rate",
+      "avgLate": "Avg Late",
+      "avgOT": "Avg OT",
+      "good": "Good",
+      "low": "Low"
+    },
+    "payroll": {
+      "title": "Payroll Analytics",
+      "totalNet": "Total Net",
+      "totalGross": "Total Gross",
+      "avgNet": "Avg Net",
+      "overtime": "Total Overtime",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "employees": "employees"
+    },
+    "leave": {
+      "title": "Leave Analytics",
+      "totalRequests": "total requests",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "byType": "By Type"
+    },
+    "topPerformers": {
+      "title": "Top Performers",
+      "days": "days"
+    },
+    "lateLeaders": {
+      "title": "Most Late",
+      "empty": "No late arrivals this month"
+    }
   },
   "auditLogs": {
     "title": "Audit Logs",

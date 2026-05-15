@@ -2362,6 +2362,28 @@ Full role-based permission matrix (10 role categories × 30+ granular permission
 
 ---
 
+### 2026-05-15 — TASK 43: HR Analytics Dashboard
+
+- **Changed**: নতুন `/hr/analytics` API endpoint + HR Analytics Dashboard page তৈরি হয়েছে
+- **What**:
+  - `openapi.yaml`: `/hr/analytics` GET endpoint + `HrAnalytics`, `HrAnalyticsAttendanceTrend`, `HrAnalyticsEmployeeRow`, `HrAnalyticsLeaveByType` schemas যোগ
+  - Backend: `artifacts/api-server/src/modules/hr/hr.service.ts` + `hr.router.ts` — attendance/payroll/leave aggregation
+  - Frontend: `artifacts/dokan360/src/pages/HrAnalytics.tsx` + 4 components (`AttendanceStatsCard`, `PayrollStatsCard`, `LeaveStatsCard`, `TopPerformersTable`)
+  - Route: `/hr-analytics` — sidebar nav-এ BarChart2 icon দিয়ে যোগ
+  - i18n: `hrAnalytics.*` keys — bn.json + en.json উভয়ে
+- **API**: `GET /api/hr/analytics?month=5&year=2026` → returns `HrAnalytics` DTO
+- **Analytics data**:
+  - KPI tiles: total active employees, attendance rate, total net salary, leave requests
+  - Attendance: present/absent/late/halfDay totals, avg late/OT minutes, 6-month trend area chart
+  - Payroll: total gross/net, avg net, overtime, paid/unpaid pie chart
+  - Leave: total requests, status breakdown (pending/approved/rejected) bar chart, by-type breakdown
+  - Top Performers table: top 5 by attendance %
+  - Late Leaders table: top 5 by total late minutes
+- **Why**: HR managers-এর জন্য একটি জায়গায় attendance + payroll + leave data দেখার সুবিধা
+- **Impacted**: `openapi.yaml`, `lib/api-spec` (codegen), `artifacts/api-server/src/modules/hr/`, `artifacts/api-server/src/router.ts`, `artifacts/dokan360/src/pages/HrAnalytics.tsx`, `artifacts/dokan360/src/components/hr/`, `artifacts/dokan360/src/App.tsx`, `artifacts/dokan360/src/layouts/AppLayout.tsx`, `artifacts/dokan360/src/i18n/locales/bn.json`, `artifacts/dokan360/src/i18n/locales/en.json`
+
+---
+
 ### 2026-05-08 — Project initialized on Replit from GitHub
 
 - **Changed**: GitHub repository clone করা হয়েছে, Replit-এ setup করা হয়েছে

@@ -1,5 +1,5 @@
 import type { QueryKey, UseMutationOptions, UseMutationResult, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
-import type { AdjustInventoryBody, AnalyticsPeriodPoint, ApproveLeaveRequestBody, AttendanceListResponse, AttendanceRecord, AttendanceReportResponse, AuditLogsResponse, AuthResponse, CalendarScheduleResponse, Category, CheckInRequest, CheckOutRequest, CollectPaymentBody, CreateAttendanceRequest, CreateCategoryBody, CreateCustomRoleBody, CreateCustomerBody, CreateLeaveRequestBody, CreateLeaveTypeRequest, CreateProductBody, CreatePurchaseBody, CreateSalaryGradeBody, CreateSaleBody, CreateScheduleRequest, CreateShiftRequest, CreateSupplierBody, CustomRoleItem, Customer, DashboardSummary, DeleteSchedule200, DeleteShift200, DueReport, DutySchedule, ErrorResponse, GeneratePayroll201, GeneratePayrollBody, GetAttendanceReportParams, GetAuditLogsParams, GetCalendarScheduleParams, GetDashboardAnalyticsParams, GetEmployeePayrollHistoryParams, GetPayrollStatsParams, GetProductReportParams, GetProfitReportParams, GetSalesReportParams, GetStaffReportParams, HealthStatus, HeatmapPoint, InventoryAdjustment, InventoryItem, InventoryReport, InviteUserBody, LeaveBalance, LeaveRequest, LeaveRequestListResponse, LeaveType, LedgerEntry, ListAttendanceParams, ListCustomersParams, ListLeaveBalancesParams, ListLeaveRequestsParams, ListPayrollParams, ListProductsParams, ListSalesParams, ListSchedulesParams, ListSuppliersParams, LoginBody, LogoutBody, MarkAllNotificationsRead200, MarkPayrollPaidBody, Notification, NotificationCount, OkResponse, PayPurchaseDueBody, PayrollRecord, PayrollStats, Product, ProductReport, ProfitReport, Purchase, PurchaseDetail, PurchaseStats, RefreshBody, RefreshResponse, RegisterBody, RegisterPendingResponse, RejectLeaveRequestBody, RolePermissionsResponse, SalaryGrade, Sale, SaleDetail, SalesChartPoint, SalesReport, Shift, ShopInfo, ShopUser, StaffReport, Supplier, SupplierStats, TodayAttendanceResponse, TopProduct, UpdateAttendanceRequest, UpdateCustomerBody, UpdateLeaveRequestBody, UpdateLeaveTypeRequest, UpdatePayrollRecordBody, UpdateProductBody, UpdateRolePermissionsBody, UpdateSalaryGradeBody, UpdateScheduleRequest, UpdateShiftRequest, UpdateShopBody, UpdateSupplierBody, UpdateUserAccessRequest, UpdateUserBody, User, UserAccessDetail, UserAccessListResponse, WeeklyScheduleResponse } from "./api.schemas";
+import type { AdjustInventoryBody, AnalyticsPeriodPoint, ApproveLeaveRequestBody, AttendanceListResponse, AttendanceRecord, AttendanceReportResponse, AuditLogsResponse, AuthResponse, CalendarScheduleResponse, Category, CheckInRequest, CheckOutRequest, CollectPaymentBody, CreateAttendanceRequest, CreateCategoryBody, CreateCustomRoleBody, CreateCustomerBody, CreateLeaveRequestBody, CreateLeaveTypeRequest, CreateProductBody, CreatePurchaseBody, CreateSalaryGradeBody, CreateSaleBody, CreateScheduleRequest, CreateShiftRequest, CreateSupplierBody, CustomRoleItem, Customer, DashboardSummary, DeleteSchedule200, DeleteShift200, DueReport, DutySchedule, ErrorResponse, GeneratePayroll201, GeneratePayrollBody, GetAttendanceReportParams, GetAuditLogsParams, GetCalendarScheduleParams, GetDashboardAnalyticsParams, GetEmployeePayrollHistoryParams, GetHrAnalyticsParams, GetPayrollStatsParams, GetProductReportParams, GetProfitReportParams, GetSalesReportParams, GetStaffReportParams, HealthStatus, HeatmapPoint, HrAnalytics, InventoryAdjustment, InventoryItem, InventoryReport, InviteUserBody, LeaveBalance, LeaveRequest, LeaveRequestListResponse, LeaveType, LedgerEntry, ListAttendanceParams, ListCustomersParams, ListLeaveBalancesParams, ListLeaveRequestsParams, ListPayrollParams, ListProductsParams, ListSalesParams, ListSchedulesParams, ListSuppliersParams, LoginBody, LogoutBody, MarkAllNotificationsRead200, MarkPayrollPaidBody, Notification, NotificationCount, OkResponse, PayPurchaseDueBody, PayrollRecord, PayrollStats, Product, ProductReport, ProfitReport, Purchase, PurchaseDetail, PurchaseStats, RefreshBody, RefreshResponse, RegisterBody, RegisterPendingResponse, RejectLeaveRequestBody, RolePermissionsResponse, SalaryGrade, Sale, SaleDetail, SalesChartPoint, SalesReport, Shift, ShopInfo, ShopUser, StaffReport, Supplier, SupplierStats, TodayAttendanceResponse, TopProduct, UpdateAttendanceRequest, UpdateCustomerBody, UpdateLeaveRequestBody, UpdateLeaveTypeRequest, UpdatePayrollRecordBody, UpdateProductBody, UpdateRolePermissionsBody, UpdateSalaryGradeBody, UpdateScheduleRequest, UpdateShiftRequest, UpdateShopBody, UpdateSupplierBody, UpdateUserAccessRequest, UpdateUserBody, User, UserAccessDetail, UserAccessListResponse, WeeklyScheduleResponse } from "./api.schemas";
 import { customFetch } from "../custom-fetch";
 import type { ErrorType, BodyType } from "../custom-fetch";
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -2648,6 +2648,29 @@ export type ListPayrollQueryError = ErrorType<unknown>;
  */
 export declare function useListPayroll<TData = Awaited<ReturnType<typeof listPayroll>>, TError = ErrorType<unknown>>(params: ListPayrollParams, options?: {
     query?: UseQueryOptions<Awaited<ReturnType<typeof listPayroll>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+};
+/**
+ * @summary HR Analytics — attendance, payroll, leave summary for a month
+ */
+export declare const getGetHrAnalyticsUrl: (params: GetHrAnalyticsParams) => string;
+export declare const getHrAnalytics: (params: GetHrAnalyticsParams, options?: RequestInit) => Promise<HrAnalytics>;
+export declare const getGetHrAnalyticsQueryKey: (params?: GetHrAnalyticsParams) => readonly ["/api/hr/analytics", ...GetHrAnalyticsParams[]];
+export declare const getGetHrAnalyticsQueryOptions: <TData = Awaited<ReturnType<typeof getHrAnalytics>>, TError = ErrorType<unknown>>(params: GetHrAnalyticsParams, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getHrAnalytics>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseQueryOptions<Awaited<ReturnType<typeof getHrAnalytics>>, TError, TData> & {
+    queryKey: QueryKey;
+};
+export type GetHrAnalyticsQueryResult = NonNullable<Awaited<ReturnType<typeof getHrAnalytics>>>;
+export type GetHrAnalyticsQueryError = ErrorType<unknown>;
+/**
+ * @summary HR Analytics — attendance, payroll, leave summary for a month
+ */
+export declare function useGetHrAnalytics<TData = Awaited<ReturnType<typeof getHrAnalytics>>, TError = ErrorType<unknown>>(params: GetHrAnalyticsParams, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getHrAnalytics>>, TError, TData>;
     request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

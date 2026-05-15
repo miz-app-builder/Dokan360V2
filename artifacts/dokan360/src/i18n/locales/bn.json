@@ -19,7 +19,8 @@
     "schedule": "ডিউটি সূচি",
     "leaves": "ছুটি ব্যবস্থাপনা",
     "payroll": "বেতন ব্যবস্থাপনা",
-    "salaryGrades": "বেতন গ্রেড"
+    "salaryGrades": "বেতন গ্রেড",
+    "hrAnalytics": "HR বিশ্লেষণ"
   },
   "theme": {
     "toggle": "থিম পরিবর্তন",
@@ -1230,6 +1231,61 @@
     "gradeNotAssigned": "কোনো গ্রেড নেই",
     "systemBadge": "সিস্টেম",
     "systemBadgeTitle": "এটি একটি সিস্টেম ডিফল্ট গ্রেড। পরিবর্তন করলে এই shop-এর জন্য আলাদা কপি তৈরি হবে।"
+  },
+  "hrAnalytics": {
+    "title": "HR বিশ্লেষণ ড্যাশবোর্ড",
+    "subtitle": "উপস্থিতি, বেতন ও ছুটির সমন্বিত বিশ্লেষণ",
+    "min": " মিনিট",
+    "noData": "এই মাসের কোনো তথ্য নেই",
+    "noEmployees": "কোনো সক্রিয় কর্মী নেই",
+    "noEmployeesSub": "কর্মী যোগ করুন এবং হাজিরা নথিভুক্ত করুন",
+    "loadError": "তথ্য লোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।",
+    "tiles": {
+      "totalEmployees": "মোট সক্রিয় কর্মী",
+      "active": "সক্রিয়",
+      "attendanceRate": "উপস্থিতির হার",
+      "thisMonth": "এই মাসে",
+      "totalNet": "মোট নেট বেতন",
+      "leaveRequests": "ছুটির আবেদন"
+    },
+    "attendance": {
+      "title": "উপস্থিতি বিশ্লেষণ",
+      "present": "উপস্থিত",
+      "absent": "অনুপস্থিত",
+      "late": "দেরিতে",
+      "halfDay": "অর্ধদিন",
+      "rate": "উপস্থিতির হার",
+      "avgLate": "গড় বিলম্ব",
+      "avgOT": "গড় ওভারটাইম",
+      "good": "ভালো",
+      "low": "কম"
+    },
+    "payroll": {
+      "title": "বেতন বিশ্লেষণ",
+      "totalNet": "মোট নেট",
+      "totalGross": "মোট গ্রস",
+      "avgNet": "গড় নেট",
+      "overtime": "মোট ওভারটাইম",
+      "paid": "পরিশোধিত",
+      "unpaid": "বকেয়া",
+      "employees": "কর্মী"
+    },
+    "leave": {
+      "title": "ছুটি বিশ্লেষণ",
+      "totalRequests": "মোট আবেদন",
+      "pending": "অপেক্ষমাণ",
+      "approved": "অনুমোদিত",
+      "rejected": "প্রত্যাখ্যাত",
+      "byType": "ধরন অনুযায়ী"
+    },
+    "topPerformers": {
+      "title": "সেরা উপস্থিত কর্মী",
+      "days": "দিন"
+    },
+    "lateLeaders": {
+      "title": "সর্বাধিক বিলম্বকারী",
+      "empty": "এই মাসে কেউ দেরি করেনি"
+    }
   },
   "auditLogs": {
     "title": "অডিট লগ",

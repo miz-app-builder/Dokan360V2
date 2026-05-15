@@ -1193,6 +1193,60 @@ export interface UpdateSalaryGradeBody {
      */
     otherPercent?: number;
 }
+export interface HrAnalyticsAttendanceTrend {
+    month: number;
+    year: number;
+    presentDays: number;
+    absentDays: number;
+    attendanceRate: number;
+}
+export interface HrAnalyticsEmployeeRow {
+    employeeId: number;
+    name: string;
+    attendancePercent: number;
+    presentDays: number;
+    workingDays: number;
+    lateMinutes: number;
+}
+export interface HrAnalyticsLeaveByType {
+    leaveTypeName: string;
+    count: number;
+}
+export type HrAnalyticsAttendance = {
+    totalPresent: number;
+    totalAbsent: number;
+    totalLate: number;
+    totalHalfDay: number;
+    attendanceRate: number;
+    avgLateMinutes: number;
+    avgOvertimeMinutes: number;
+    monthlyTrend: HrAnalyticsAttendanceTrend[];
+};
+export type HrAnalyticsPayroll = {
+    totalGross: number;
+    totalNet: number;
+    avgNet: number;
+    paidCount: number;
+    unpaidCount: number;
+    totalOvertimePay: number;
+};
+export type HrAnalyticsLeave = {
+    totalRequests: number;
+    pending: number;
+    approved: number;
+    rejected: number;
+    byType: HrAnalyticsLeaveByType[];
+};
+export interface HrAnalytics {
+    month: number;
+    year: number;
+    totalActiveEmployees: number;
+    attendance: HrAnalyticsAttendance;
+    payroll: HrAnalyticsPayroll;
+    leave: HrAnalyticsLeave;
+    topPerformers: HrAnalyticsEmployeeRow[];
+    lateLeaders: HrAnalyticsEmployeeRow[];
+}
 export type ListProductsParams = {
     search?: string;
     categoryId?: number;
@@ -1327,6 +1381,17 @@ export type ListPayrollPaymentStatus = (typeof ListPayrollPaymentStatus)[keyof t
 export declare const ListPayrollPaymentStatus: {
     readonly unpaid: "unpaid";
     readonly paid: "paid";
+};
+export type GetHrAnalyticsParams = {
+    /**
+     * @minimum 1
+     * @maximum 12
+     */
+    month: number;
+    /**
+     * @minimum 2020
+     */
+    year: number;
 };
 export type GetPayrollStatsParams = {
     /**
