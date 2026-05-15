@@ -294,29 +294,39 @@ export async function generatePayroll(
   for (const emp of employees) {
     if (existingIds.has(emp.id)) { skipped++; continue; }
 
-    const baseSalary      = Number(emp.salary ?? 0);
+    // totalSalary = employee's full monthly CTC (e.g. ৳50,000)
+    // Grade breaks it down: basicPercent is pro-rated by attendance;
+    // allowance percentages are fixed monthly amounts (Bangladesh HR convention).
+    // Full month present + no overtime → net = totalSalary exactly.
+    const totalSalary = Number(emp.salary ?? 0);
+    const grade       = emp.salaryGradeId !== null ? gradesMap.get(emp.salaryGradeId) : undefined;
+    const round2      = (n: number) => Math.round(n * 100) / 100;
+
+    // Basic component (will be pro-rated inside calcTotals)
+    const basicPct   = grade ? Number(grade.basicPercent) : 100;
+    const baseSalary = round2(totalSalary * basicPct / 100);
+
+    // Allowances: fixed full-month amounts from totalSalary (not pro-rated for absences)
+    const houseRentAllowance = grade ? round2(totalSalary * Number(grade.houseRentPercent) / 100) : 0;
+    const medicalAllowance   = grade ? round2(totalSalary * Number(grade.medicalPercent)   / 100) : 0;
+    const transportAllowance = grade ? round2(totalSalary * Number(grade.transportPercent) / 100) : 0;
+    const foodAllowance      = grade ? round2(totalSalary * Number(grade.foodPercent)      / 100) : 0;
+
     const empAtt          = attendanceRows.filter((a) => a.employeeId === emp.id);
     const presentDays     = empAtt.filter((a) => a.status === "present" || a.status === "late" || a.status === "half_day").length;
     const absentDays      = empAtt.filter((a) => a.status === "absent").length;
     const lateMinutes     = empAtt.reduce((s, a) => s + a.lateMinutes, 0);
     const overtimeMinutes = empAtt.reduce((s, a) => s + a.overtimeMinutes, 0);
 
-    const otRate      = overtimeRatePerMinute ?? (baseSalary > 0 ? baseSalary / (26 * 8 * 60) : 0);
+    // OT rate based on full totalSalary (not just basic)
+    const otRate      = overtimeRatePerMinute ?? (totalSalary > 0 ? totalSalary / (26 * 8 * 60) : 0);
     const overtimePay = Math.round(otRate * overtimeMinutes * 100) / 100;
 
+    // Unpaid leave: deduct full daily rate (totalSalary / workingDays) per unpaid day
     const empUnpaidLeave       = unpaidLeaveRows.filter((l) => l.employeeId === emp.id && !l.isPaid);
     const unpaidLeaveDays      = empUnpaidLeave.reduce((s, l) => s + l.days, 0);
-    const dailyRate            = wDays > 0 ? baseSalary / wDays : 0;
-    const unpaidLeaveDeduction = Math.round(dailyRate * unpaidLeaveDays * 100) / 100;
-
-    // Compute allowances from salary grade if assigned
-    const grade = emp.salaryGradeId !== null ? gradesMap.get(emp.salaryGradeId) : undefined;
-    const round2 = (n: number) => Math.round(n * 100) / 100;
-    const houseRentAllowance = grade ? round2(baseSalary * Number(grade.houseRentPercent) / 100) : 0;
-    const medicalAllowance   = grade ? round2(baseSalary * Number(grade.medicalPercent)   / 100) : 0;
-    const transportAllowance = grade ? round2(baseSalary * Number(grade.transportPercent) / 100) : 0;
-    const foodAllowance      = grade ? round2(baseSalary * Number(grade.foodPercent)      / 100) : 0;
-    // basicPercent + otherPercent are absorbed into baseSalary itself — allowances are additive
+    const dailyRate            = wDays > 0 ? totalSalary / wDays : 0;
+    const unpaidLeaveDeduction = round2(dailyRate * unpaidLeaveDays);
 
     const { grossSalary, netSalary } = calcTotals({
       baseSalary,
