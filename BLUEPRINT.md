@@ -2472,6 +2472,16 @@ Full role-based permission matrix (10 role categories × 30+ granular permission
 - **Business logic**: Sum of all 6 percents (basic+houseRent+medical+transport+food+other) must equal exactly 100. Payroll generate auto-reads assigned grade and sets houseRent/medical/transport/food allowances from grade percentages × baseSalary.
 - **Impacted**: `lib/db/src/schema/salary-grades.ts`, `lib/db/src/schema/employees.ts`, `lib/db/src/schema/index.ts`, `artifacts/api-server/src/modules/salary-grades/`, `artifacts/api-server/src/modules/employees/employees.service.ts`, `artifacts/api-server/src/modules/payroll/payroll.service.ts`, `artifacts/api-server/src/router.ts`, `lib/api-spec/openapi.yaml`, `lib/api-client-react/src/generated/`, `artifacts/dokan360/src/pages/SalaryGrades.tsx`, `artifacts/dokan360/src/App.tsx`, `artifacts/dokan360/src/layouts/AppLayout.tsx`, i18n locale files
 
+### 2026-05-15 — Employee Salary Grade Assignment UI
+
+- **Changed**:
+  - `artifacts/dokan360/src/pages/Employees.tsx`: `Employee` type-এ `salaryGradeId?: number | null` যোগ; `EmployeeForm` type-এ `salaryGradeId: string` যোগ; `EMPTY_FORM` updated; `SalaryGradeOption` type + `fetchSalaryGrades()` helper যোগ; `EmployeeFormDialog`-এ salary grades query (`useQuery`); form Section 1-এ "বেতন গ্রেড" Select dropdown যোগ — grade select হলে hint text দেখায়; `buildPayload()` এ `salaryGradeId` include; employee card-এ grade indicator badge (GraduationCap icon); form reset-এ `salaryGradeId` populate
+  - `artifacts/dokan360/src/i18n/locales/bn.json`: `employees.salaryGrade`, `employees.salaryGradePlaceholder`, `employees.noGrade`, `employees.salaryGradeHint` keys যোগ
+  - `artifacts/dokan360/src/i18n/locales/en.json`: same keys (English)
+- **Why**: Employee add/edit form-এ salary grade assign করার UI ছিল না; backend ইতিমধ্যে `salaryGradeId` support করে এবং payroll grade থেকে allowances auto-calculate করে — শুধু frontend gap ছিল
+- **Flow**: Manager employee form-এ grade select করেন → save → payroll generate করার সময় সেই grade-এর % দিয়ে house rent / medical / transport / food allowance auto-calculate হয়
+- **Impacted**: `artifacts/dokan360/src/pages/Employees.tsx`, `artifacts/dokan360/src/i18n/locales/bn.json`, `artifacts/dokan360/src/i18n/locales/en.json`
+
 ### 2026-05-15 — Salary Grade Default System (Copy-on-Write)
 
 - **Changed**:

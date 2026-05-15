@@ -74,6 +74,7 @@ import {
   ChevronUp,
   Camera,
   MoreVertical,
+  GraduationCap,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -104,6 +105,7 @@ type Employee = {
   joiningDate?: string | null;
   bloodGroup?: BloodGroup | null;
   salary?: number | null;
+  salaryGradeId?: number | null;
   status: EmployeeStatus;
   department?: string | null;
   designation?: string | null;
@@ -147,6 +149,7 @@ type EmployeeForm = {
   joiningDate: string;
   bloodGroup: string;
   salary: string;
+  salaryGradeId: string;
   status: string;
   department: string;
   designation: string;
@@ -161,7 +164,7 @@ const EMPTY_FORM: EmployeeForm = {
   name: "", employeeCode: "", fatherName: "", motherName: "",
   phone: "", emergencyContact: "", email: "", address: "",
   nidNumber: "", dateOfBirth: "", gender: "", joiningDate: "",
-  bloodGroup: "", salary: "", status: "active", department: "",
+  bloodGroup: "", salary: "", salaryGradeId: "", status: "active", department: "",
   designation: "", notes: "", photo: "", nidDocPath: "", cvPath: "", contractPath: "",
 };
 
@@ -210,6 +213,11 @@ async function apiRevokeAccess(id: number) {
 async function fetchNextEmployeeCode(): Promise<string> {
   const res = await customFetch<{ code: string }>("/api/employees/next-code");
   return res.code;
+}
+
+type SalaryGradeOption = { id: number; name: string; isDefault: boolean };
+async function fetchSalaryGrades(): Promise<SalaryGradeOption[]> {
+  return customFetch<SalaryGradeOption[]>("/api/salary-grades");
 }
 
 type UserRoleOption = {
@@ -489,6 +497,13 @@ function EmployeeFormDialog({
     staleTime: 5 * 60 * 1000,
   });
 
+  /* Fetch salary grades for grade dropdown */
+  const { data: salaryGrades = [] } = useQuery({
+    queryKey: ["salary-grades"],
+    queryFn:  fetchSalaryGrades,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const [form, setForm] = useState<EmployeeForm>(EMPTY_FORM);
 
   /* POS access state — create mode */
@@ -534,6 +549,7 @@ function EmployeeFormDialog({
         joiningDate:      employee.joiningDate ?? "",
         bloodGroup:       employee.bloodGroup ?? "",
         salary:           employee.salary !== null && employee.salary !== undefined ? String(employee.salary) : "",
+        salaryGradeId:    employee.salaryGradeId !== null && employee.salaryGradeId !== undefined ? String(employee.salaryGradeId) : "",
         status:           employee.status,
         department:       employee.department ?? "",
         designation:      employee.designation ?? "",
@@ -629,6 +645,7 @@ function EmployeeFormDialog({
       joiningDate:      form.joiningDate || null,
       bloodGroup:       form.bloodGroup || null,
       salary:           form.salary ? parseFloat(form.salary) : null,
+      salaryGradeId:    form.salaryGradeId ? Number(form.salaryGradeId) : null,
       status:           form.status || "active",
       department:       form.department.trim() || null,
       designation:      form.designation.trim() || null,
@@ -891,6 +908,28 @@ function EmployeeFormDialog({
                   <Label className="text-xs font-medium text-muted-foreground">{t("employees.salary")} (৳)</Label>
                   <Input className="h-10 rounded-xl border-border/70 text-sm" type="number" min={0}
                     value={form.salary} onChange={onInput("salary")} placeholder="0" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">{t("employees.salaryGrade")}</Label>
+                  <Select
+                    value={form.salaryGradeId || "__none__"}
+                    onValueChange={(v) => setForm((f) => ({ ...f, salaryGradeId: v === "__none__" ? "" : v }))}
+                  >
+                    <SelectTrigger className="h-10 rounded-xl border-border/70 text-sm">
+                      <SelectValue placeholder={t("employees.salaryGradePlaceholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">{t("employees.noGrade")}</SelectItem>
+                      {salaryGrades.map((g) => (
+                        <SelectItem key={g.id} value={String(g.id)}>
+                          {g.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {form.salaryGradeId && (
+                    <p className="text-xs text-muted-foreground">{t("employees.salaryGradeHint")}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-muted-foreground">{t("employees.joiningDate")}</Label>
@@ -1235,6 +1274,12 @@ function EmployeeCard({
               <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
                 <DollarSign className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
                 <span>{formatCurrency(employee.salary)}</span>
+              </div>
+            )}
+            {!isSystemOnly && employee.salaryGradeId !== null && employee.salaryGradeId !== undefined && (
+              <div className="flex items-center gap-1.5 text-xs text-lime-700 dark:text-lime-400 font-medium">
+                <GraduationCap className="h-3.5 w-3.5 shrink-0" />
+                <span>{t("employees.salaryGrade")}</span>
               </div>
             )}
             {isSystemOnly && employee.systemRole && (
