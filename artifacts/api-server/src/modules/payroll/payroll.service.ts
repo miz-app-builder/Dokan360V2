@@ -294,23 +294,14 @@ export async function generatePayroll(
   for (const emp of employees) {
     if (existingIds.has(emp.id)) { skipped++; continue; }
 
-    // totalSalary = employee's full monthly CTC (e.g. ৳50,000)
-    // Grade breaks it down: basicPercent is pro-rated by attendance;
-    // allowance percentages are fixed monthly amounts (Bangladesh HR convention).
-    // Full month present + no overtime → net = totalSalary exactly.
+    // ── Option 1: Full Pro-rata ──────────────────────────────────────────────
+    // salary = total monthly CTC.  ALL components scale with attendance:
+    //   net (excl. OT & deductions) = totalSalary × (presentDays / workingDays)
+    // Grade only controls the payslip breakdown (how the earned amount is split).
+    // 0 days present → ৳0.  Full month present + no OT → exactly totalSalary.
     const totalSalary = Number(emp.salary ?? 0);
     const grade       = emp.salaryGradeId !== null ? gradesMap.get(emp.salaryGradeId) : undefined;
     const round2      = (n: number) => Math.round(n * 100) / 100;
-
-    // Basic component (will be pro-rated inside calcTotals)
-    const basicPct   = grade ? Number(grade.basicPercent) : 100;
-    const baseSalary = round2(totalSalary * basicPct / 100);
-
-    // Allowances: fixed full-month amounts from totalSalary (not pro-rated for absences)
-    const houseRentAllowance = grade ? round2(totalSalary * Number(grade.houseRentPercent) / 100) : 0;
-    const medicalAllowance   = grade ? round2(totalSalary * Number(grade.medicalPercent)   / 100) : 0;
-    const transportAllowance = grade ? round2(totalSalary * Number(grade.transportPercent) / 100) : 0;
-    const foodAllowance      = grade ? round2(totalSalary * Number(grade.foodPercent)      / 100) : 0;
 
     const empAtt          = attendanceRows.filter((a) => a.employeeId === emp.id);
     const presentDays     = empAtt.filter((a) => a.status === "present" || a.status === "late" || a.status === "half_day").length;
@@ -318,20 +309,33 @@ export async function generatePayroll(
     const lateMinutes     = empAtt.reduce((s, a) => s + a.lateMinutes, 0);
     const overtimeMinutes = empAtt.reduce((s, a) => s + a.overtimeMinutes, 0);
 
-    // OT rate based on full totalSalary (not just basic)
+    // Proportion of month actually worked
+    const proRataFactor = wDays > 0 ? presentDays / wDays : 0;
+
+    // Grade percentages split the EARNED amount into payslip components.
+    // All values stored in the record are already pro-rated.
+    const basicPct = grade ? Number(grade.basicPercent) : 100;
+    const baseSalary       = round2(totalSalary * basicPct / 100 * proRataFactor);
+    const houseRentAllowance = grade ? round2(totalSalary * Number(grade.houseRentPercent) / 100 * proRataFactor) : 0;
+    const medicalAllowance   = grade ? round2(totalSalary * Number(grade.medicalPercent)   / 100 * proRataFactor) : 0;
+    const transportAllowance = grade ? round2(totalSalary * Number(grade.transportPercent) / 100 * proRataFactor) : 0;
+    const foodAllowance      = grade ? round2(totalSalary * Number(grade.foodPercent)      / 100 * proRataFactor) : 0;
+
+    // OT rate from full totalSalary (26 working days × 8 hrs × 60 min standard)
     const otRate      = overtimeRatePerMinute ?? (totalSalary > 0 ? totalSalary / (26 * 8 * 60) : 0);
-    const overtimePay = Math.round(otRate * overtimeMinutes * 100) / 100;
+    const overtimePay = round2(otRate * overtimeMinutes);
 
-    // Unpaid leave: deduct full daily rate (totalSalary / workingDays) per unpaid day
-    const empUnpaidLeave       = unpaidLeaveRows.filter((l) => l.employeeId === emp.id && !l.isPaid);
-    const unpaidLeaveDays      = empUnpaidLeave.reduce((s, l) => s + l.days, 0);
-    const dailyRate            = wDays > 0 ? totalSalary / wDays : 0;
-    const unpaidLeaveDeduction = round2(dailyRate * unpaidLeaveDays);
+    // Unpaid leave days — tracked for HR records only.
+    // Pro-rata already reduces pay for every absent day; no separate deduction needed.
+    const empUnpaidLeave  = unpaidLeaveRows.filter((l) => l.employeeId === emp.id && !l.isPaid);
+    const unpaidLeaveDays = empUnpaidLeave.reduce((s, l) => s + l.days, 0);
 
+    // All components are pre-pro-rated → pass presentDays = workingDays to
+    // calcTotals so it does NOT re-apply pro-rata on baseSalary.
     const { grossSalary, netSalary } = calcTotals({
       baseSalary,
       workingDays:           wDays,
-      presentDays,
+      presentDays:           wDays,   // already pro-rated above; prevent double-reduction
       houseRentAllowance,
       medicalAllowance,
       transportAllowance,
@@ -341,7 +345,7 @@ export async function generatePayroll(
       bonus:                 0,
       advance:               0,
       otherDeductions:       0,
-      unpaidLeaveDeduction,
+      unpaidLeaveDeduction:  0,       // pro-rata handles all absence; no extra deduction
       providentFundEmployee: 0,
       taxDeduction:          0,
       loanDeduction:         0,
@@ -368,7 +372,7 @@ export async function generatePayroll(
       advance:               "0",
       otherDeductions:       "0",
       unpaidLeaveDays,
-      unpaidLeaveDeduction:  String(unpaidLeaveDeduction),
+      unpaidLeaveDeduction:  "0",
       providentFundEmployee: "0",
       providentFundEmployer: "0",
       taxDeduction:          "0",

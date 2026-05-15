@@ -2507,18 +2507,22 @@ Full role-based permission matrix (10 role categories × 30+ granular permission
 - **Why**: English mode-এ notification bell ও Leave Management page-এ Bengali text দেখাচ্ছিল; bilingual JSON approach DB schema পরিবর্তন ছাড়াই সমাধান দেয় এবং পুরনো plain-text rows backward compatible থাকে
 - **Impacted**: `artifacts/api-server/src/modules/notifications/notifications.service.ts`, `artifacts/api-server/src/modules/leaves/leaves-requests.service.ts`, `artifacts/dokan360/src/components/notifications/NotificationCenter.tsx`, `artifacts/dokan360/src/components/leaves/LeaveRequestsTab.tsx`, `artifacts/dokan360/src/components/leaves/LeaveBalancesTab.tsx`
 
-### 2026-05-15 — Payroll Salary Calculation Bug Fix: Grade-based Breakdown
+### 2026-05-15 — Payroll: Full Pro-rata Calculation (Option 1)
 
-- **Changed**: `artifacts/api-server/src/modules/payroll/payroll.service.ts` — `generatePayroll` function-এ salary calculation logic সম্পূর্ণ সংশোধন
-- **Bug (আগে)**: Allowances, employee-এর `salary` field-এর উপরে additive ভাবে যোগ হতো — Grade A + ৳৫০,০০০ salary হলে gross = ৳৫০,০০০ + ৳২০,০০০ allowances = ৳৭০,০০০ (ভুল)
-- **Fix (এখন)**:
-  - `salary` field = employee-এর total monthly CTC (e.g. ৳৫০,০০০)
-  - `baseSalary` (payroll record-এ) = `totalSalary × basicPercent/100` → শুধু basic component, attendance-এর উপর pro-rata হয়
-  - Allowances = `totalSalary × allowancePercent/100` → fixed full-month amounts (Bangladesh HR convention: allowances pro-rated হয় না absent-এর জন্য)
-  - OT rate = `totalSalary / (26 × 8 × 60)` per minute (আগে শুধু baseSalary ব্যবহার হতো)
-  - Unpaid leave daily rate = `totalSalary / workingDays` (full daily package deduct)
-  - Full month present + no overtime → `grossSalary = netSalary = totalSalary` (exactly ৳৫০,০০০) ✓
-- **Why**: User-এর expectation: salary ৳৫০,০০০ set → full month → exactly ৳৫০,০০০ পাবে। আগের additive approach-এ Grade A employee ৳৭০,০০০ পেত যা ভুল
+- **Changed**: `artifacts/api-server/src/modules/payroll/payroll.service.ts` — `generatePayroll` function-এ salary calculation model পরিবর্তন
+- **Previous model (Option 2 — discarded)**: Basic pro-rata, allowances fixed monthly → 0 দিন কাজ করলেও allowances পাওয়া যেত (৳৯,০০০ for AAA with 0 days)
+- **New model (Option 1 — Full Pro-rata)**:
+  - `salary` field = employee-এর total monthly CTC
+  - `proRataFactor = presentDays / workingDays`
+  - সব components (basic + সব allowances) × proRataFactor = earned amounts stored in record
+  - Grade percentages শুধু payslip breakdown-এর জন্য (earned amount-কে visual-এ split করে)
+  - `calcTotals`-এ `presentDays = workingDays` pass করা হয় (double pro-rating prevent)
+  - `unpaidLeaveDeduction = 0` — pro-rata সব absence handle করে, separate deduction নেই
+  - OT rate = `totalSalary / (26 × 8 × 60)` per minute
+  - **0 দিন present → ৳০** ✓
+  - **পুরো মাস present + no OT → exactly totalSalary** ✓
+  - **৩ দিন present (Masud) → ৳৫০,০০০ × (৩/২১) = ৳৭,১৪৩ + OT** ✓
+- **Why**: Bangladesh ছোট ব্যবসার HR standard — "কাজ = টাকা, কাজ নেই = টাকা নেই"; সহজ, স্বচ্ছ, fair
 - **Impacted**: `artifacts/api-server/src/modules/payroll/payroll.service.ts`
 
 ### 2026-05-14 — Supabase DB-level triggers: employees ↔ users bidirectional name sync
