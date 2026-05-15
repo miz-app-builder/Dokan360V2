@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useGetHrAnalytics } from "@workspace/api-client-react";
-import { AppLayout } from "@/layouts/AppLayout";
 import { usePageSubtitle } from "@/contexts/PageSubtitleContext";
 import { AttendanceStatsCard } from "@/components/hr/AttendanceStatsCard";
 import { PayrollStatsCard }    from "@/components/hr/PayrollStatsCard";
@@ -78,7 +77,6 @@ export default function HrAnalytics() {
   const { data, isLoading, isError } = useGetHrAnalytics({ month, year });
 
   return (
-    <AppLayout>
       <div className="space-y-5">
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -196,6 +194,5 @@ export default function HrAnalytics() {
           </div>
         )}
       </div>
-    </AppLayout>
   );
 }
