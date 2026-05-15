@@ -2355,7 +2355,7 @@ export const DeletePayrollRecordResponse = zod.object({
  */
 export const ListSalaryGradesResponseItem = zod.object({
   id: zod.number(),
-  shopId: zod.number(),
+  shopId: zod.number().nullish(),
   name: zod.string(),
   description: zod.string().nullish(),
   basicPercent: zod.number(),
@@ -2364,6 +2364,7 @@ export const ListSalaryGradesResponseItem = zod.object({
   transportPercent: zod.number(),
   foodPercent: zod.number(),
   otherPercent: zod.number(),
+  isDefault: zod.boolean(),
   createdAt: zod.string(),
   updatedAt: zod.string(),
 });
@@ -2428,7 +2429,7 @@ export const GetSalaryGradeParams = zod.object({
 
 export const GetSalaryGradeResponse = zod.object({
   id: zod.number(),
-  shopId: zod.number(),
+  shopId: zod.number().nullish(),
   name: zod.string(),
   description: zod.string().nullish(),
   basicPercent: zod.number(),
@@ -2437,6 +2438,7 @@ export const GetSalaryGradeResponse = zod.object({
   transportPercent: zod.number(),
   foodPercent: zod.number(),
   otherPercent: zod.number(),
+  isDefault: zod.boolean(),
   createdAt: zod.string(),
   updatedAt: zod.string(),
 });
@@ -2503,7 +2505,7 @@ export const UpdateSalaryGradeBody = zod.object({
 
 export const UpdateSalaryGradeResponse = zod.object({
   id: zod.number(),
-  shopId: zod.number(),
+  shopId: zod.number().nullish(),
   name: zod.string(),
   description: zod.string().nullish(),
   basicPercent: zod.number(),
@@ -2512,6 +2514,7 @@ export const UpdateSalaryGradeResponse = zod.object({
   transportPercent: zod.number(),
   foodPercent: zod.number(),
   otherPercent: zod.number(),
+  isDefault: zod.boolean(),
   createdAt: zod.string(),
   updatedAt: zod.string(),
 });

@@ -2472,6 +2472,20 @@ Full role-based permission matrix (10 role categories × 30+ granular permission
 - **Business logic**: Sum of all 6 percents (basic+houseRent+medical+transport+food+other) must equal exactly 100. Payroll generate auto-reads assigned grade and sets houseRent/medical/transport/food allowances from grade percentages × baseSalary.
 - **Impacted**: `lib/db/src/schema/salary-grades.ts`, `lib/db/src/schema/employees.ts`, `lib/db/src/schema/index.ts`, `artifacts/api-server/src/modules/salary-grades/`, `artifacts/api-server/src/modules/employees/employees.service.ts`, `artifacts/api-server/src/modules/payroll/payroll.service.ts`, `artifacts/api-server/src/router.ts`, `lib/api-spec/openapi.yaml`, `lib/api-client-react/src/generated/`, `artifacts/dokan360/src/pages/SalaryGrades.tsx`, `artifacts/dokan360/src/App.tsx`, `artifacts/dokan360/src/layouts/AppLayout.tsx`, i18n locale files
 
+### 2026-05-15 — Salary Grade Default System (Copy-on-Write)
+
+- **Changed**:
+  - `lib/db/src/schema/salary-grades.ts`: `shopId` nullable করা হয়েছে (system defaults-এর জন্য `NULL`); নতুন column `isSystemDefault boolean NOT NULL DEFAULT false`
+  - `lib/api-spec/openapi.yaml`: `SalaryGrade` schema-তে `isDefault: boolean` যোগ; `shopId` nullable করা হয়েছে
+  - `artifacts/api-server/src/modules/salary-grades/salary-grades.service.ts`: Copy-on-write architecture — `hasOwnGrades()`, `copyDefaultsToShop()`, `resolveGradeForShop()` helper যোগ; `listSalaryGrades` এখন shop-এর নিজস্ব grade না থাকলে system defaults দেখায়; create/update/delete-এ প্রথম interaction-এ defaults shop-এর নামে clone হয়
+  - `lib/api-client-react/src/generated/`: codegen-এ `isDefault` field যোগ হয়েছে
+  - `artifacts/dokan360/src/pages/SalaryGrades.tsx`: `GradeCard`-এ `ShieldCheck` icon সহ "সিস্টেম" badge — `grade.isDefault === true` হলে দেখায়
+  - `artifacts/dokan360/src/i18n/locales/bn.json` ও `en.json`: `systemBadge`, `systemBadgeTitle` key যোগ
+  - `lib/db/src/migrate-salary-grades-defaults.ts`: targeted migration script — `shop_id DROP NOT NULL`, `is_system_default` column add, 4টি default grade seed
+- **Why**: নতুন shop salary grades page-এ empty state দেখত; system-wide default grades দিলে সব shop প্রথমে একই structure দেখবে; shop কিছু পরিবর্তন করলে শুধু তার নিজের data দেখবে — অন্য shops বা system defaults অপ্রভাবিত থাকবে
+- **Default Grades Seeded**: গ্রেড-এ (সিনিয়র, 60/25/5/5/5/0%), গ্রেড-বি (মিড, 55/25/7/7/6/0%), গ্রেড-সি (জুনিয়র, 50/30/8/7/5/0%), গ্রেড-ডি (এন্ট্রি, 50/28/8/8/6/0%)
+- **Impacted**: `lib/db/src/schema/salary-grades.ts`, `lib/api-spec/openapi.yaml`, `artifacts/api-server/src/modules/salary-grades/salary-grades.service.ts`, `artifacts/dokan360/src/pages/SalaryGrades.tsx`, `artifacts/dokan360/src/i18n/locales/bn.json`, `artifacts/dokan360/src/i18n/locales/en.json`
+
 ### 2026-05-15 — Bilingual notification system + Leave i18n fixes
 
 - **Changed**:

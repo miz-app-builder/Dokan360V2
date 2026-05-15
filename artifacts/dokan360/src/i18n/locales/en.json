@@ -1223,7 +1223,9 @@
     "example": "Example (Salary ৳10,000)",
     "employeeCount": "{{count}} employee(s)",
     "gradeAssigned": "Grade assigned",
-    "gradeNotAssigned": "No grade"
+    "gradeNotAssigned": "No grade",
+    "systemBadge": "System",
+    "systemBadgeTitle": "This is a system default grade. Editing it will create a shop-specific copy."
   },
   "auditLogs": {
     "title": "Audit Logs",

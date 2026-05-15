@@ -6104,7 +6104,7 @@ export declare const DeletePayrollRecordResponse: zod.ZodObject<{
  */
 export declare const ListSalaryGradesResponseItem: zod.ZodObject<{
     id: zod.ZodNumber;
-    shopId: zod.ZodNumber;
+    shopId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     basicPercent: zod.ZodNumber;
@@ -6113,38 +6113,41 @@ export declare const ListSalaryGradesResponseItem: zod.ZodObject<{
     transportPercent: zod.ZodNumber;
     foodPercent: zod.ZodNumber;
     otherPercent: zod.ZodNumber;
+    isDefault: zod.ZodBoolean;
     createdAt: zod.ZodString;
     updatedAt: zod.ZodString;
 }, "strip", zod.ZodTypeAny, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }>;
 export declare const ListSalaryGradesResponse: zod.ZodArray<zod.ZodObject<{
     id: zod.ZodNumber;
-    shopId: zod.ZodNumber;
+    shopId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     basicPercent: zod.ZodNumber;
@@ -6153,33 +6156,36 @@ export declare const ListSalaryGradesResponse: zod.ZodArray<zod.ZodObject<{
     transportPercent: zod.ZodNumber;
     foodPercent: zod.ZodNumber;
     otherPercent: zod.ZodNumber;
+    isDefault: zod.ZodBoolean;
     createdAt: zod.ZodString;
     updatedAt: zod.ZodString;
 }, "strip", zod.ZodTypeAny, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }>, "many">;
 /**
@@ -6237,7 +6243,7 @@ export declare const GetSalaryGradeParams: zod.ZodObject<{
 }>;
 export declare const GetSalaryGradeResponse: zod.ZodObject<{
     id: zod.ZodNumber;
-    shopId: zod.ZodNumber;
+    shopId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     basicPercent: zod.ZodNumber;
@@ -6246,33 +6252,36 @@ export declare const GetSalaryGradeResponse: zod.ZodObject<{
     transportPercent: zod.ZodNumber;
     foodPercent: zod.ZodNumber;
     otherPercent: zod.ZodNumber;
+    isDefault: zod.ZodBoolean;
     createdAt: zod.ZodString;
     updatedAt: zod.ZodString;
 }, "strip", zod.ZodTypeAny, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }>;
 /**
@@ -6327,7 +6336,7 @@ export declare const UpdateSalaryGradeBody: zod.ZodObject<{
 }>;
 export declare const UpdateSalaryGradeResponse: zod.ZodObject<{
     id: zod.ZodNumber;
-    shopId: zod.ZodNumber;
+    shopId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
     name: zod.ZodString;
     description: zod.ZodOptional<zod.ZodNullable<zod.ZodString>>;
     basicPercent: zod.ZodNumber;
@@ -6336,33 +6345,36 @@ export declare const UpdateSalaryGradeResponse: zod.ZodObject<{
     transportPercent: zod.ZodNumber;
     foodPercent: zod.ZodNumber;
     otherPercent: zod.ZodNumber;
+    isDefault: zod.ZodBoolean;
     createdAt: zod.ZodString;
     updatedAt: zod.ZodString;
 }, "strip", zod.ZodTypeAny, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }, {
     id: number;
     name: string;
-    shopId: number;
     createdAt: string;
     updatedAt: string;
+    isDefault: boolean;
     basicPercent: number;
     houseRentPercent: number;
     medicalPercent: number;
     transportPercent: number;
     foodPercent: number;
     otherPercent: number;
+    shopId?: number | null | undefined;
     description?: string | null | undefined;
 }>;
 /**

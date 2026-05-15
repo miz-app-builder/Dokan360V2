@@ -35,6 +35,7 @@ import {
   Trash2,
   AlertCircle,
   AlertTriangle,
+  ShieldCheck,
 } from "lucide-react";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -111,9 +112,18 @@ function GradeCard({ grade, onEdit, onDelete, t }: GradeCardProps) {
         {/* Header */}
         <div className="flex items-start justify-between gap-3 p-4 border-b">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <GraduationCap className="h-4 w-4 text-primary shrink-0" />
               <span className="font-semibold truncate">{grade.name}</span>
+              {grade.isDefault && (
+                <span
+                  title={t("salaryGrades.systemBadgeTitle")}
+                  className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 shrink-0"
+                >
+                  <ShieldCheck className="h-2.5 w-2.5" />
+                  {t("salaryGrades.systemBadge")}
+                </span>
+              )}
             </div>
             {grade.description && (
               <p className="text-xs text-muted-foreground mt-0.5 truncate">{grade.description}</p>

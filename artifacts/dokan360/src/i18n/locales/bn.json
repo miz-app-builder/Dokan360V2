@@ -1223,7 +1223,9 @@
     "example": "উদাহরণ (১০,০০০ টাকা বেতনে)",
     "employeeCount": "{{count}} জন কর্মী",
     "gradeAssigned": "গ্রেড নির্ধারিত",
-    "gradeNotAssigned": "কোনো গ্রেড নেই"
+    "gradeNotAssigned": "কোনো গ্রেড নেই",
+    "systemBadge": "সিস্টেম",
+    "systemBadgeTitle": "এটি একটি সিস্টেম ডিফল্ট গ্রেড। পরিবর্তন করলে এই shop-এর জন্য আলাদা কপি তৈরি হবে।"
   },
   "auditLogs": {
     "title": "অডিট লগ",

@@ -1260,7 +1260,7 @@ export interface UpdatePayrollRecordBody {
 
 export interface SalaryGrade {
   id: number;
-  shopId: number;
+  shopId?: number | null;
   name: string;
   description?: string | null;
   basicPercent: number;
@@ -1269,6 +1269,7 @@ export interface SalaryGrade {
   transportPercent: number;
   foodPercent: number;
   otherPercent: number;
+  isDefault: boolean;
   createdAt: string;
   updatedAt: string;
 }

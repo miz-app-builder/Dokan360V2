@@ -1,9 +1,10 @@
-import { pgTable, serial, integer, text, numeric, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, numeric, boolean, timestamp } from "drizzle-orm/pg-core";
 import { shopsTable } from "./shops";
 
 export const salaryGradesTable = pgTable("salary_grades", {
   id:               serial("id").primaryKey(),
-  shopId:           integer("shop_id").references(() => shopsTable.id).notNull(),
+  shopId:           integer("shop_id").references(() => shopsTable.id),
+  isSystemDefault:  boolean("is_system_default").notNull().default(false),
   name:             text("name").notNull(),
   description:      text("description"),
   basicPercent:     numeric("basic_percent",      { precision: 5, scale: 2 }).notNull().default("60"),

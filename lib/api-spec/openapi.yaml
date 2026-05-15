@@ -4565,7 +4565,9 @@ components:
       type: object
       properties:
         id:                   { type: integer }
-        shopId:               { type: integer }
+        shopId:
+          type: integer
+          nullable: true
         name:                 { type: string }
         description:
           type: string
@@ -4576,9 +4578,10 @@ components:
         transportPercent:     { type: number }
         foodPercent:          { type: number }
         otherPercent:         { type: number }
+        isDefault:            { type: boolean }
         createdAt:            { type: string }
         updatedAt:            { type: string }
-      required: [id, shopId, name, basicPercent, houseRentPercent, medicalPercent, transportPercent, foodPercent, otherPercent, createdAt, updatedAt]
+      required: [id, name, basicPercent, houseRentPercent, medicalPercent, transportPercent, foodPercent, otherPercent, isDefault, createdAt, updatedAt]
 
     CreateSalaryGradeBody:
       type: object
