@@ -826,6 +826,9 @@
     "defaultShiftDesc": "After adding employee, this shift will be auto-assigned Mon–Fri",
     "noShift": "No shift selected",
     "defaultShiftAssigning": "Assigning default shift...",
+    "weeklyScheduleSection": "Weekly Schedule",
+    "weeklyScheduleSectionDesc": "Edit each day's shift assignment",
+    "scheduleUpdateFailed": "Failed to update schedule",
     "emergencyContact": "Emergency Contact",
     "fatherName": "Father's Name",
     "fatherNamePlaceholder": "Enter father's name",
@@ -928,7 +931,10 @@
     "performanceDesc": "TASK 43 — Coming soon",
     "activityLogs": "Activity Logs",
     "activityLogsDesc": "TASK 44 — Coming soon",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "dutySchedule": "Duty Schedule",
+    "dutyScheduleDesc": "Weekly shift assignments",
+    "noScheduleData": "No schedule assigned"
   },
   "attendance": {
     "title": "Attendance Management",

@@ -75,6 +75,7 @@ import {
   Camera,
   MoreVertical,
   GraduationCap,
+  CalendarDays,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -224,6 +225,18 @@ async function fetchSalaryGrades(): Promise<SalaryGradeOption[]> {
   return customFetch<SalaryGradeOption[]>("/api/salary-grades");
 }
 
+type DutyScheduleDto = {
+  id: number;
+  shiftId: number | null;
+  shiftName: string | null;
+  shiftNameBn: string | null;
+  shiftStartTime: string | null;
+  shiftEndTime: string | null;
+  shiftColor: string | null;
+  type: string;
+  weekday: number | null;
+};
+
 async function apiCreateScheduleEntry(data: {
   employeeId: number;
   shiftId: number;
@@ -235,6 +248,22 @@ async function apiCreateScheduleEntry(data: {
     body: JSON.stringify(data),
     headers: { "Content-Type": "application/json" },
   });
+}
+
+async function apiDeleteScheduleEntry(id: number) {
+  return customFetch<void>(`/api/schedules/${id}`, { method: "DELETE" });
+}
+
+async function apiUpdateScheduleEntry(id: number, shiftId: number) {
+  return customFetch<void>(`/api/schedules/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify({ shiftId }),
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+async function fetchEmployeeWeeklySchedule(employeeId: number): Promise<DutyScheduleDto[]> {
+  return customFetch<DutyScheduleDto[]>(`/api/schedules?employeeId=${employeeId}&type=weekly`);
 }
 
 type UserRoleOption = {
@@ -491,7 +520,7 @@ function EmployeeFormDialog({
 }: {
   open: boolean; onClose: () => void; employee?: Employee | null;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
   const { user } = useAuth();
@@ -523,6 +552,48 @@ function EmployeeFormDialog({
 
   /* Fetch active shifts for default shift dropdown (new employee only) */
   const { data: availableShifts = [] } = useListShifts();
+
+  /* Fetch existing weekly schedule when editing an employee */
+  const { data: existingSchedule = [], refetch: refetchSchedule } = useQuery({
+    queryKey: ["schedules", "weekly", employee?.id],
+    queryFn: () => fetchEmployeeWeeklySchedule(employee!.id),
+    enabled: !isNew && !!employee?.id && open,
+    staleTime: 0,
+  });
+
+  /* Build weekday → DutyScheduleDto map from fetched data */
+  const editScheduleMap = useMemo<Map<number, DutyScheduleDto>>(() => {
+    const m = new Map<number, DutyScheduleDto>();
+    for (const s of existingSchedule) {
+      if (s.weekday !== null) m.set(s.weekday, s);
+    }
+    return m;
+  }, [existingSchedule]);
+
+  const [scheduleUpdating, setScheduleUpdating] = useState<Record<number, boolean>>({});
+
+  async function handleScheduleChange(weekday: number, currentEntry: DutyScheduleDto | undefined, value: string) {
+    setScheduleUpdating((prev) => ({ ...prev, [weekday]: true }));
+    try {
+      if (value === "__off__") {
+        /* Remove assignment for this day */
+        if (currentEntry) await apiDeleteScheduleEntry(currentEntry.id);
+      } else {
+        const shiftId = Number(value);
+        if (currentEntry) {
+          await apiUpdateScheduleEntry(currentEntry.id, shiftId);
+        } else {
+          await apiCreateScheduleEntry({ employeeId: employee!.id, shiftId, type: "weekly", weekday });
+        }
+      }
+      await refetchSchedule();
+      qc.invalidateQueries({ queryKey: getGetWeeklyScheduleQueryKey() });
+    } catch {
+      toast({ title: t("employees.scheduleUpdateFailed"), variant: "destructive" });
+    } finally {
+      setScheduleUpdating((prev) => ({ ...prev, [weekday]: false }));
+    }
+  }
 
   const [form, setForm] = useState<EmployeeForm>(EMPTY_FORM);
   const [defaultShiftId, setDefaultShiftId] = useState<string>("");
@@ -1075,6 +1146,63 @@ function EmployeeFormDialog({
                 value={form.notes} onChange={(e) => set("notes")(e.target.value)}
                 placeholder={t("employees.notesPlaceholder")} />
             </div>
+
+            {/* ── Section 5.5: Weekly Schedule (edit mode only) ── */}
+            {!isNew && employee && !employee.isSystemOnly && availableShifts.filter((s) => s.isActive).length > 0 && (
+              <div>
+                <SectionHeader icon={CalendarDays} label={t("employees.weeklyScheduleSection")} accent="bg-amber-500/8" iconColor="text-amber-600" />
+                <p className="text-xs text-muted-foreground mb-3 -mt-1">{t("employees.weeklyScheduleSectionDesc")}</p>
+                <div className="grid grid-cols-7 gap-1.5">
+                  {([0, 1, 2, 3, 4, 5, 6] as const).map((wd) => {
+                    const entry = editScheduleMap.get(wd);
+                    const dayLabel = t(`schedule.weekdaysShort.${wd}`);
+                    const currentValue = entry ? String(entry.shiftId) : "__off__";
+                    const isUpdating = scheduleUpdating[wd] ?? false;
+
+                    return (
+                      <div key={wd} className="flex flex-col items-center gap-1.5">
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest text-center">{dayLabel}</p>
+                        <Select
+                          value={currentValue}
+                          onValueChange={(v) => handleScheduleChange(wd, entry, v)}
+                          disabled={isUpdating}
+                        >
+                          <SelectTrigger className="h-auto min-h-[52px] rounded-xl border-border/60 p-1.5 text-center [&>svg]:hidden w-full">
+                            {isUpdating ? (
+                              <div className="flex items-center justify-center w-full">
+                                <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                              </div>
+                            ) : entry ? (
+                              <div className="flex flex-col items-center gap-1 w-full">
+                                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.shiftColor ?? "hsl(var(--primary))" }} />
+                                <p className="text-[10px] font-semibold leading-tight text-center break-all" style={{ color: entry.shiftColor ?? "hsl(var(--foreground))" }}>
+                                  {i18n.language === "bn" ? (entry.shiftNameBn ?? entry.shiftName) : entry.shiftName}
+                                </p>
+                              </div>
+                            ) : (
+                              <p className="text-[10px] text-muted-foreground w-full text-center">{t("schedule.dayOff")}</p>
+                            )}
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__off__">
+                              <span className="text-xs text-muted-foreground">{t("schedule.dayOff")}</span>
+                            </SelectItem>
+                            {availableShifts.filter((s) => s.isActive).map((s) => (
+                              <SelectItem key={s.id} value={String(s.id)}>
+                                <div className="flex items-center gap-2">
+                                  <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: s.color ?? "hsl(var(--primary))" }} />
+                                  <span className="text-xs">{i18n.language === "bn" ? s.nameBn : s.name}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* ── Section 6: POS Access ────────────────────────── */}
 

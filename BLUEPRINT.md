@@ -2362,6 +2362,19 @@ Full role-based permission matrix (10 role categories × 30+ granular permission
 
 ---
 
+### 2026-05-15 — TASK 38: Duty Schedule — DutyScheduleWidget + per-day shift editor
+
+- **Changed**: TASK 38 duty schedule item সম্পূর্ণ হয়েছে
+- **What**:
+  - `EmployeeProfile.tsx`: `DutyScheduleWidget` component যোগ — 7-day grid, color-coded shift cards, shift time range, language-aware (বাংলা/ইংরেজি), `/api/schedules?employeeId=X&type=weekly` ব্যবহার করে
+  - `Employees.tsx`: `EmployeeFormDialog` edit mode-এ Section 5.5 (Weekly Schedule) যোগ — per-day Select dropdowns, live save (PATCH/POST/DELETE on change), loading spinner per-day, i18n labels
+  - `DutyScheduleDto` type, `fetchEmployeeWeeklySchedule` / `apiDeleteScheduleEntry` / `apiUpdateScheduleEntry` API helpers যোগ
+  - i18n keys: `employeeProfile.dutySchedule`, `employeeProfile.dutyScheduleDesc`, `employeeProfile.noScheduleData`, `employees.weeklyScheduleSection`, `employees.weeklyScheduleSectionDesc`, `employees.scheduleUpdateFailed`
+- **Why**: TASK 38 completion — employee profile-এ duty schedule দেখানো এবং edit dialog-এ per-day schedule edit করার সুবিধা
+- **Impacted**: `EmployeeProfile.tsx`, `Employees.tsx`, `bn.json`, `en.json`
+
+---
+
 ### 2026-05-15 — TASK 43: HR Analytics Dashboard
 
 - **Changed**: নতুন `/hr/analytics` API endpoint + HR Analytics Dashboard page তৈরি হয়েছে

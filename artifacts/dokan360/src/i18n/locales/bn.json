@@ -826,6 +826,9 @@
     "defaultShiftDesc": "নতুন কর্মী যোগের পরে সোম–শুক্র স্বয়ংক্রিয়ভাবে এই শিফট নির্ধারিত হবে",
     "noShift": "শিফট নির্বাচন না করুন",
     "defaultShiftAssigning": "ডিফল্ট শিফট নির্ধারণ হচ্ছে...",
+    "weeklyScheduleSection": "সাপ্তাহিক সূচি",
+    "weeklyScheduleSectionDesc": "প্রতিটি দিনের শিফট পরিবর্তন করুন",
+    "scheduleUpdateFailed": "সূচি আপডেট ব্যর্থ হয়েছে",
     "emergencyContact": "জরুরি যোগাযোগ",
     "fatherName": "পিতার নাম",
     "fatherNamePlaceholder": "পিতার নাম লিখুন",
@@ -928,7 +931,10 @@
     "performanceDesc": "TASK 43 — শীঘ্রই আসছে",
     "activityLogs": "কার্যক্রমের ইতিহাস",
     "activityLogsDesc": "TASK 44 — শীঘ্রই আসছে",
-    "comingSoon": "শীঘ্রই আসছে"
+    "comingSoon": "শীঘ্রই আসছে",
+    "dutySchedule": "ডিউটি সূচি",
+    "dutyScheduleDesc": "সাপ্তাহিক শিফট বরাদ্দ",
+    "noScheduleData": "কোনো সূচি নির্ধারিত নেই"
   },
   "attendance": {
     "title": "উপস্থিতি ব্যবস্থাপনা",

@@ -32,6 +32,7 @@ import {
   Users,
   AlertCircle,
   ExternalLink,
+  CalendarDays,
 } from "lucide-react";
 import { EmployeeLeaveSection } from "@/components/leaves/EmployeeLeaveSection";
 
@@ -39,6 +40,18 @@ import { EmployeeLeaveSection } from "@/components/leaves/EmployeeLeaveSection";
 type EmployeeStatus = "active" | "inactive" | "suspended" | "resigned";
 type EmployeeGender = "male" | "female" | "other";
 type BloodGroup = "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-";
+
+type DutyScheduleDto = {
+  id: number;
+  shiftId: number | null;
+  shiftName: string | null;
+  shiftNameBn: string | null;
+  shiftStartTime: string | null;
+  shiftEndTime: string | null;
+  shiftColor: string | null;
+  type: string;
+  weekday: number | null;
+};
 
 type Employee = {
   id: number;
@@ -143,6 +156,80 @@ function ComingSoonCard({ icon: Icon, title, description, accent }: {
           <AlertCircle className="h-6 w-6 text-muted-foreground/40" />
           <p className="text-xs text-muted-foreground">{t("employeeProfile.comingSoon")}</p>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ─── Duty Schedule Widget ───────────────────────────────────── */
+function DutyScheduleWidget({ employeeId }: { employeeId: number }) {
+  const { t, i18n } = useTranslation();
+  const isBn = i18n.language === "bn";
+
+  const { data: schedules = [], isLoading } = useQuery({
+    queryKey: ["schedules", "weekly", employeeId],
+    queryFn: () => customFetch<DutyScheduleDto[]>(`/api/schedules?employeeId=${employeeId}&type=weekly`),
+    staleTime: 30 * 1000,
+  });
+
+  const dayMap = new Map<number, DutyScheduleDto>();
+  for (const s of schedules) {
+    if (s.weekday !== null) dayMap.set(s.weekday, s);
+  }
+
+  const WEEKDAYS = [0, 1, 2, 3, 4, 5, 6] as const;
+
+  return (
+    <Card className="border-border/60 shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <div className="h-7 w-7 rounded-lg bg-amber-500/12 flex items-center justify-center">
+            <CalendarDays className="h-3.5 w-3.5 text-amber-500" />
+          </div>
+          {t("employeeProfile.dutySchedule")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        {isLoading ? (
+          <div className="grid grid-cols-7 gap-1.5">
+            {WEEKDAYS.map((d) => <Skeleton key={d} className="h-16 rounded-xl" />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-7 gap-1.5">
+            {WEEKDAYS.map((wd) => {
+              const entry = dayMap.get(wd);
+              const dayLabel = t(`schedule.weekdaysShort.${wd}`);
+              const shiftName = entry ? (isBn ? (entry.shiftNameBn ?? entry.shiftName) : entry.shiftName) : null;
+
+              return (
+                <div key={wd} className="flex flex-col items-center gap-1.5">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">{dayLabel}</p>
+                  {entry && shiftName ? (
+                    <div
+                      className="w-full rounded-xl px-1.5 py-2.5 flex flex-col items-center gap-1 min-h-[52px] justify-center"
+                      style={{ backgroundColor: entry.shiftColor ? `${entry.shiftColor}22` : "hsl(var(--muted))", border: `1px solid ${entry.shiftColor ?? "hsl(var(--border))"}44` }}
+                    >
+                      <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: entry.shiftColor ?? "hsl(var(--muted-foreground))" }} />
+                      <p className="text-[10px] font-semibold text-center leading-tight break-words" style={{ color: entry.shiftColor ?? "hsl(var(--foreground))" }}>
+                        {shiftName}
+                      </p>
+                      {entry.shiftStartTime && entry.shiftEndTime && (
+                        <p className="text-[9px] text-muted-foreground">{entry.shiftStartTime}–{entry.shiftEndTime}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-full rounded-xl border border-dashed border-border/50 bg-muted/20 min-h-[52px] flex items-center justify-center">
+                      <p className="text-[10px] text-muted-foreground">—</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {!isLoading && schedules.length === 0 && (
+          <p className="text-xs text-muted-foreground text-center mt-3">{t("employeeProfile.noScheduleData")}</p>
+        )}
       </CardContent>
     </Card>
   );
@@ -651,6 +738,11 @@ export default function EmployeeProfilePage() {
       {/* Attendance Summary Widget */}
       <motion.div variants={fadeInUp}>
         <AttendanceSummaryWidget employeeId={employeeId} />
+      </motion.div>
+
+      {/* Duty Schedule Widget */}
+      <motion.div variants={fadeInUp}>
+        <DutyScheduleWidget employeeId={employeeId} />
       </motion.div>
 
       {/* Leave Summary & Requests */}

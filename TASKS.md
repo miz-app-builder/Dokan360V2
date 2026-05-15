@@ -263,10 +263,10 @@
   - [x] manager sees assigned outlet
   - [x] HR sees employee module only
 
-### TASK 38 — Employee Profile Dashboard 🔄 PARTIAL
+### TASK 38 — Employee Profile Dashboard ✅ COMPLETE
 - [x] employee profile page (EmployeeProfile.tsx — full profile, documents, signed URLs)
 - [x] attendance summary (AttendanceSummaryWidget — real data via `/attendance/report?employeeId`, month/year selector, % bar, 6-stat grid, late+overtime badges)
-- [ ] duty schedule
+- [x] duty schedule (DutyScheduleWidget — 7-day grid, color-coded shift cards with time range, language-aware, `/api/schedules?employeeId=X&type=weekly`)
 - [ ] salary summary (stub — coming soon UI placeholder)
 - [ ] activity logs (stub — coming soon UI placeholder)
 - [ ] performance metrics (stub — coming soon UI placeholder)
