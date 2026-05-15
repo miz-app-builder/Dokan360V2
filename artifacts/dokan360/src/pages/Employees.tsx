@@ -88,6 +88,10 @@ import {
 type EmployeeStatus = "active" | "inactive" | "suspended" | "resigned";
 type EmployeeGender = "male" | "female" | "other";
 type BloodGroup = "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-";
+type DayState = "shift" | "off" | "none";
+type WeeklyEntry = { id: number; weekday: number | null; shiftId: number | null };
+const DEFAULT_NEW_DAYS: DayState[] = ["off","shift","shift","shift","shift","shift","off"];
+const DEFAULT_EDIT_DAYS: DayState[] = ["none","none","none","none","none","none","none"];
 
 type Employee = {
   id: number;
