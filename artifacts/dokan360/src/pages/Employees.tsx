@@ -888,6 +888,36 @@ function EmployeeFormDialog({
                   <Input className="h-10 rounded-xl border-border/70 text-sm font-medium"
                     value={form.name} onChange={onInput("name")} placeholder={t("employees.namePlaceholder")} />
                 </div>
+                {/* Default Shift — new employee only, shown prominently at top */}
+                {isNew && (
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <div className="flex items-center gap-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">{t("employees.defaultShift")}</Label>
+                      <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
+                        {t("common.optional")}
+                      </span>
+                    </div>
+                    <Select
+                      value={defaultShiftId || "__none__"}
+                      onValueChange={(v) => setDefaultShiftId(v === "__none__" ? "" : v)}
+                    >
+                      <SelectTrigger className="h-10 rounded-xl border-border/70 text-sm">
+                        <SelectValue placeholder={t("employees.noShift")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__none__">{t("employees.noShift")}</SelectItem>
+                        {availableShifts.filter((s) => s.isActive).map((s) => (
+                          <SelectItem key={s.id} value={String(s.id)}>
+                            {s.nameBn} ({s.startTime}–{s.endTime})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {defaultShiftId && (
+                      <p className="text-xs text-muted-foreground">{t("employees.defaultShiftDesc")}</p>
+                    )}
+                  </div>
+                )}
                 {/* Employee ID — auto-generated, locked */}
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-1.5">
@@ -968,36 +998,6 @@ function EmployeeFormDialog({
                   <Input className="h-10 rounded-xl border-border/70 text-sm" type="date"
                     value={form.joiningDate} onChange={onInput("joiningDate")} />
                 </div>
-                {/* Default Shift — new employee only */}
-                {isNew && (
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <div className="flex items-center gap-1.5">
-                      <Label className="text-xs font-medium text-muted-foreground">{t("employees.defaultShift")}</Label>
-                      <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                        {t("common.optional")}
-                      </span>
-                    </div>
-                    <Select
-                      value={defaultShiftId || "__none__"}
-                      onValueChange={(v) => setDefaultShiftId(v === "__none__" ? "" : v)}
-                    >
-                      <SelectTrigger className="h-10 rounded-xl border-border/70 text-sm">
-                        <SelectValue placeholder={t("employees.noShift")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="__none__">{t("employees.noShift")}</SelectItem>
-                        {availableShifts.filter((s) => s.isActive).map((s) => (
-                          <SelectItem key={s.id} value={String(s.id)}>
-                            {s.nameBn} ({s.startTime}–{s.endTime})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {defaultShiftId && (
-                      <p className="text-xs text-muted-foreground">{t("employees.defaultShiftDesc")}</p>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
 
