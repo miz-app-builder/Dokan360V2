@@ -1405,6 +1405,152 @@ export interface HrAnalytics {
   lateLeaders: HrAnalyticsEmployeeRow[];
 }
 
+export type RotationPatternCycleType =
+  (typeof RotationPatternCycleType)[keyof typeof RotationPatternCycleType];
+
+export const RotationPatternCycleType = {
+  daily: "daily",
+  weekly: "weekly",
+  monthly: "monthly",
+} as const;
+
+export interface RotationPattern {
+  id: number;
+  shopId: number;
+  name: string;
+  nameBn: string;
+  cycleType: RotationPatternCycleType;
+  cycleLength: number;
+  startDate: string;
+  isDefault: boolean;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RotationPatternSlot {
+  id: number;
+  patternId: number;
+  slotIndex: number;
+  weekday: number | null;
+  shiftId: number | null;
+  shiftName: string | null;
+  shiftNameBn: string | null;
+  shiftColor: string | null;
+  shiftStartTime: string | null;
+  shiftEndTime: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type RotationPatternWithSlots = RotationPattern & {
+  slots: RotationPatternSlot[];
+};
+
+export interface RotationSlotInput {
+  slotIndex: number;
+  weekday?: number | null;
+  shiftId?: number | null;
+}
+
+export type CreateRotationPatternBodyCycleType =
+  (typeof CreateRotationPatternBodyCycleType)[keyof typeof CreateRotationPatternBodyCycleType];
+
+export const CreateRotationPatternBodyCycleType = {
+  daily: "daily",
+  weekly: "weekly",
+  monthly: "monthly",
+} as const;
+
+export interface CreateRotationPatternBody {
+  name: string;
+  nameBn: string;
+  cycleType: CreateRotationPatternBodyCycleType;
+  /**
+   * @minimum 1
+   * @maximum 12
+   */
+  cycleLength: number;
+  startDate: string;
+  isDefault?: boolean;
+}
+
+export type UpdateRotationPatternBodyCycleType =
+  (typeof UpdateRotationPatternBodyCycleType)[keyof typeof UpdateRotationPatternBodyCycleType];
+
+export const UpdateRotationPatternBodyCycleType = {
+  daily: "daily",
+  weekly: "weekly",
+  monthly: "monthly",
+} as const;
+
+export interface UpdateRotationPatternBody {
+  name?: string;
+  nameBn?: string;
+  cycleType?: UpdateRotationPatternBodyCycleType;
+  /**
+   * @minimum 1
+   * @maximum 12
+   */
+  cycleLength?: number;
+  startDate?: string;
+  isDefault?: boolean;
+  isActive?: boolean;
+}
+
+export type EmployeeRotationAssignmentCycleType =
+  (typeof EmployeeRotationAssignmentCycleType)[keyof typeof EmployeeRotationAssignmentCycleType];
+
+export const EmployeeRotationAssignmentCycleType = {
+  daily: "daily",
+  weekly: "weekly",
+  monthly: "monthly",
+} as const;
+
+export interface EmployeeRotationAssignment {
+  id: number;
+  employeeId: number;
+  patternId: number;
+  patternName: string;
+  patternNameBn: string;
+  cycleType: EmployeeRotationAssignmentCycleType;
+  cycleLength: number;
+  startDate: string;
+  endDate: string | null;
+  createdAt: string;
+}
+
+export interface RotationDaySlot {
+  weekday: number;
+  shiftId: number | null;
+  shiftName: string | null;
+  shiftNameBn: string | null;
+  shiftColor: string | null;
+  shiftStartTime: string | null;
+  shiftEndTime: string | null;
+}
+
+export type EmployeeRotationScheduleCycleType =
+  | (typeof EmployeeRotationScheduleCycleType)[keyof typeof EmployeeRotationScheduleCycleType]
+  | null;
+
+export const EmployeeRotationScheduleCycleType = {
+  daily: "daily",
+  weekly: "weekly",
+  monthly: "monthly",
+} as const;
+
+export interface EmployeeRotationSchedule {
+  hasRotation: boolean;
+  patternId: number | null;
+  patternName: string | null;
+  patternNameBn: string | null;
+  cycleType: EmployeeRotationScheduleCycleType;
+  cycleLength: number | null;
+  currentSlotIndex: number | null;
+  days: RotationDaySlot[];
+}
+
 export type ListProductsParams = {
   search?: string;
   categoryId?: number;
@@ -1620,4 +1766,21 @@ export type GetEmployeePayrollHistoryParams = {
 
 export type MarkPayrollPaidBody = {
   note?: string;
+};
+
+export type DeleteRotationPatternsId200 = {
+  ok?: boolean;
+};
+
+export type PutRotationPatternsIdSlotsBody = {
+  slots: RotationSlotInput[];
+};
+
+export type PostEmployeesIdRotationBody = {
+  patternId: number;
+  startDate: string;
+};
+
+export type DeleteEmployeesIdRotation200 = {
+  ok?: boolean;
 };

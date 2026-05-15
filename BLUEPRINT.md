@@ -2560,6 +2560,36 @@ Full role-based permission matrix (10 role categories × 30+ granular permission
 - **Why**: Bangladesh ছোট ব্যবসার HR standard — "কাজ = টাকা, কাজ নেই = টাকা নেই"; সহজ, স্বচ্ছ, fair
 - **Impacted**: `artifacts/api-server/src/modules/payroll/payroll.service.ts`
 
+### 2026-05-15 — TASK 44: Shift Rotation Pattern System
+
+- **Changed**: সম্পূর্ণ নতুন Shift Rotation Pattern module implement হয়েছে
+- **Why**: রোটেশন-ভিত্তিক শিফট (যেমন: ২-সপ্তাহ পর পর শিফট পরিবর্তন) HR module-এ প্রয়োজনীয়
+- **DB**: `lib/db/src/schema/schedules.ts` — `rotationCycleTypeEnum`, `rotationPatternsTable`, `rotationPatternSlotsTable`, `employeeRotationsTable` schema যোগ; migration script `lib/db/scripts/create-rotation-tables.ts` দিয়ে Supabase-এ push
+- **OpenAPI**: `lib/api-spec/openapi.yaml` — rotation-patterns CRUD, slots bulk-set, employee rotation assignment, rotation-schedule GET — সব schema + endpoint যোগ
+- **Backend**:
+  - `artifacts/api-server/src/modules/schedules/rotation.service.ts` — full CRUD + cycle slot calculation (daily=diffDays%len, weekly=floor(diffDays/7)%len, monthly=monthsDiff%len) + effective schedule generation
+  - `artifacts/api-server/src/modules/schedules/rotation.router.ts` — 8 REST endpoints
+  - `artifacts/api-server/src/router.ts` — `rotationRouter` registered
+- **Frontend**:
+  - `artifacts/dokan360/src/pages/RotationPatterns.tsx` — Admin management page: pattern CRUD (PatternFormDialog), per-slot shift grid editor (SlotEditorDialog), pattern cards with default/active badges
+  - `artifacts/dokan360/src/layouts/AppLayout.tsx` — "রোটেশন সূচি" nav entry added under HR_NAV_KEYS (RefreshCw icon, orange accent)
+  - `artifacts/dokan360/src/pages/EmployeeProfile.tsx` — `RotationScheduleWidget` (read-only 7-day grid, current cycle indicator)
+  - `artifacts/dokan360/src/pages/Employees.tsx` — `RotationAssignmentSection` in edit form (assign/remove rotation pattern with start date)
+  - `artifacts/dokan360/src/App.tsx` — `/rotation-patterns` route + lazy import
+- **i18n**: `schedule.rotation.*` (60+ keys), `nav.rotationPatterns` — bn.json + en.json উভয়ে
+- **API Endpoints**:
+  - `GET /api/rotation-patterns` — list all patterns for shop
+  - `POST /api/rotation-patterns` — create pattern
+  - `GET /api/rotation-patterns/:id` — single pattern with slots
+  - `PATCH /api/rotation-patterns/:id` — update pattern
+  - `DELETE /api/rotation-patterns/:id` — delete pattern
+  - `PUT /api/rotation-patterns/:id/slots` — bulk set slots
+  - `GET /api/employees/:id/rotation` — get employee's current rotation assignment
+  - `POST /api/employees/:id/rotation` — assign rotation to employee
+  - `DELETE /api/employees/:id/rotation` — remove rotation assignment
+  - `GET /api/employees/:id/rotation-schedule` — compute effective 7-day schedule for today
+- **Impacted**: `lib/db/src/schema/schedules.ts`, `lib/api-spec/openapi.yaml`, `artifacts/api-server/src/modules/schedules/`, `artifacts/api-server/src/router.ts`, `artifacts/dokan360/src/pages/RotationPatterns.tsx`, `artifacts/dokan360/src/pages/EmployeeProfile.tsx`, `artifacts/dokan360/src/pages/Employees.tsx`, `artifacts/dokan360/src/layouts/AppLayout.tsx`, `artifacts/dokan360/src/App.tsx`, `artifacts/dokan360/src/i18n/locales/bn.json`, `artifacts/dokan360/src/i18n/locales/en.json`
+
 ### 2026-05-14 — Supabase DB-level triggers: employees ↔ users bidirectional name sync
 
 - **Changed**: Supabase PostgreSQL-এ দুটো trigger তৈরি হয়েছে — `trg_sync_employee_name_to_user` (employees.name পরিবর্তে linked users.name auto-update) এবং `trg_sync_user_name_to_employee` (users.name পরিবর্তে linked employees.name auto-update); `scripts/create-name-sync-triggers.mjs` migration script সংরক্ষিত; উভয় trigger `SECURITY DEFINER` + `IS DISTINCT FROM` guard দিয়ে infinite loop proof

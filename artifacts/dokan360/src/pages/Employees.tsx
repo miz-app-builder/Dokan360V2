@@ -76,6 +76,7 @@ import {
   MoreVertical,
   GraduationCap,
   CalendarDays,
+  RefreshCw,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -499,6 +500,143 @@ function StatCard({ icon: Icon, label, value, accent, iconColor }: {
         </div>
       </div>
     </motion.div>
+  );
+}
+
+/* ─── Rotation types ─────────────────────────────────────────── */
+type RotationPattern = {
+  id:          number;
+  name:        string;
+  nameBn:      string;
+  cycleType:   "daily" | "weekly" | "monthly";
+  cycleLength: number;
+  isDefault:   boolean;
+};
+type EmployeeRotation = {
+  id:           number;
+  patternId:    number;
+  startDate:    string;
+  patternName:  string;
+  patternNameBn: string;
+};
+
+/* ─── Rotation Assignment Section ────────────────────────────── */
+function RotationAssignmentSection({ employeeId }: { employeeId: number }) {
+  const { t, i18n } = useTranslation();
+  const isBn = i18n.language === "bn";
+  const { toast } = useToast();
+  const qc = useQueryClient();
+
+  const { data: patterns = [] } = useQuery({
+    queryKey: ["rotation-patterns"],
+    queryFn:  () => customFetch<RotationPattern[]>("/api/rotation-patterns"),
+    staleTime: 60_000,
+  });
+
+  const { data: current, isLoading } = useQuery({
+    queryKey: ["employee-rotation", employeeId],
+    queryFn:  () => customFetch<EmployeeRotation | null>(`/api/employees/${employeeId}/rotation`),
+    staleTime: 30_000,
+    retry: false,
+  });
+
+  const today = new Date().toISOString().split("T")[0]!;
+  const [selectedPatternId, setSelectedPatternId] = useState<string>("");
+  const [startDate, setStartDate] = useState(today);
+
+  const { mutate: assign, isPending: isAssigning } = useMutation({
+    mutationFn: () => customFetch(`/api/employees/${employeeId}/rotation`, {
+      method: "POST",
+      body: JSON.stringify({ patternId: Number(selectedPatternId), startDate }),
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["employee-rotation", employeeId] });
+      qc.invalidateQueries({ queryKey: ["rotation-schedule", employeeId] });
+      toast({ title: t("schedule.rotation.assignSuccess") });
+    },
+    onError: () => toast({ title: t("schedule.rotation.assignFailed"), variant: "destructive" }),
+  });
+
+  const { mutate: remove, isPending: isRemoving } = useMutation({
+    mutationFn: () => customFetch(`/api/employees/${employeeId}/rotation`, { method: "DELETE" }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["employee-rotation", employeeId] });
+      qc.invalidateQueries({ queryKey: ["rotation-schedule", employeeId] });
+      toast({ title: t("schedule.rotation.assignSuccess") });
+    },
+    onError: () => toast({ title: t("schedule.rotation.removeFailed"), variant: "destructive" }),
+  });
+
+  const activePatterns = patterns.filter((p) => !("isActive" in p) || (p as { isActive?: boolean }).isActive !== false);
+
+  return (
+    <div>
+      <SectionHeader
+        icon={RefreshCw}
+        label={t("schedule.rotation.assignSection")}
+        accent="bg-orange-500/8"
+        iconColor="text-orange-600"
+      />
+      <p className="text-xs text-muted-foreground mb-3 -mt-1">{t("schedule.rotation.assignSectionDesc")}</p>
+
+      {isLoading ? (
+        <div className="h-20 rounded-xl bg-muted/30 animate-pulse" />
+      ) : current ? (
+        <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-lg bg-orange-500/12 flex items-center justify-center shrink-0">
+              <RefreshCw className="h-3.5 w-3.5 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold">{isBn ? current.patternNameBn : current.patternName}</p>
+              <p className="text-[10px] text-muted-foreground">{t("schedule.rotation.startDate")}: {current.startDate}</p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rounded-lg h-7 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+            disabled={isRemoving}
+            onClick={() => remove()}
+          >
+            {t("schedule.rotation.assignRemove")}
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <Select value={selectedPatternId} onValueChange={setSelectedPatternId}>
+              <SelectTrigger className="h-9 rounded-xl text-sm">
+                <SelectValue placeholder={t("schedule.rotation.assignPattern")} />
+              </SelectTrigger>
+              <SelectContent>
+                {activePatterns.map((p) => (
+                  <SelectItem key={p.id} value={String(p.id)}>
+                    <div className="flex items-center gap-2">
+                      <RefreshCw className="h-3 w-3 text-muted-foreground shrink-0" />
+                      <span className="text-xs">{isBn ? p.nameBn : p.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <input
+              type="date"
+              className="h-9 rounded-xl border border-border/70 bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <Button
+            className="w-full rounded-xl h-8 text-xs"
+            disabled={!selectedPatternId || !startDate || isAssigning}
+            onClick={() => assign()}
+          >
+            {t("schedule.rotation.assignSave")}
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -1202,6 +1340,11 @@ function EmployeeFormDialog({
                   })}
                 </div>
               </div>
+            )}
+
+            {/* ── Section 5.6: Rotation Assignment (edit mode only) ── */}
+            {!isNew && employee && !employee.isSystemOnly && (
+              <RotationAssignmentSection employeeId={employee.id} />
             )}
 
             {/* ── Section 6: POS Access ────────────────────────── */}

@@ -37,7 +37,8 @@ const Schedule         = lazy(() => import("@/pages/Schedule"));
 const Leaves           = lazy(() => import("@/pages/Leaves"));
 const Payroll          = lazy(() => import("@/pages/Payroll"));
 const SalaryGrades     = lazy(() => import("@/pages/SalaryGrades"));
-const HrAnalytics      = lazy(() => import("@/pages/HrAnalytics"));
+const HrAnalytics        = lazy(() => import("@/pages/HrAnalytics"));
+const RotationPatterns   = lazy(() => import("@/pages/RotationPatterns"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -139,7 +140,8 @@ function Router() {
         <Route path="/leaves"         component={() => <ProtectedRoute component={Leaves}            />} />
         <Route path="/payroll"        component={() => <ProtectedRoute component={Payroll}           />} />
         <Route path="/salary-grades"  component={() => <ProtectedRoute component={SalaryGrades}      />} />
-        <Route path="/hr-analytics"   component={() => <ProtectedRoute component={HrAnalytics}       />} />
+        <Route path="/hr-analytics"      component={() => <ProtectedRoute component={HrAnalytics}        />} />
+        <Route path="/rotation-patterns" component={() => <ProtectedRoute component={RotationPatterns}   />} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

@@ -2646,6 +2646,199 @@ paths:
               schema:
                 $ref: "#/components/schemas/PayrollRecord"
 
+  # ─── Rotation Patterns ─────────────────────────────────────────────────────
+
+  /rotation-patterns:
+    get:
+      tags: [schedules]
+      summary: List rotation patterns for the shop
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: List of rotation patterns
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RotationPattern" }
+    post:
+      tags: [schedules]
+      summary: Create a rotation pattern
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateRotationPatternBody" }
+      responses:
+        "201":
+          description: Created rotation pattern
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RotationPattern" }
+
+  /rotation-patterns/{id}:
+    get:
+      tags: [schedules]
+      summary: Get a rotation pattern with its slots
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Rotation pattern with slots
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RotationPatternWithSlots" }
+    patch:
+      tags: [schedules]
+      summary: Update a rotation pattern
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateRotationPatternBody" }
+      responses:
+        "200":
+          description: Updated rotation pattern
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RotationPattern" }
+    delete:
+      tags: [schedules]
+      summary: Delete a rotation pattern
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+
+  /rotation-patterns/{id}/slots:
+    put:
+      tags: [schedules]
+      summary: Bulk-replace all slots for a rotation pattern
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                slots:
+                  type: array
+                  items: { $ref: "#/components/schemas/RotationSlotInput" }
+              required: [slots]
+      responses:
+        "200":
+          description: Updated slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/RotationPatternSlot" }
+
+  /employees/{id}/rotation:
+    get:
+      tags: [employees]
+      summary: Get the active rotation assignment for an employee
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Active rotation assignment or null
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EmployeeRotationAssignment" }
+    post:
+      tags: [employees]
+      summary: Assign or replace the rotation pattern for an employee
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                patternId: { type: integer }
+                startDate: { type: string, format: date }
+              required: [patternId, startDate]
+      responses:
+        "201":
+          description: Created assignment
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EmployeeRotationAssignment" }
+    delete:
+      tags: [employees]
+      summary: Remove the active rotation assignment for an employee
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+
+  /employees/{id}/rotation-schedule:
+    get:
+      tags: [employees]
+      summary: Get the computed effective rotation schedule for an employee
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Effective rotation schedule
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/EmployeeRotationSchedule" }
+
 components:
   schemas:
     HealthStatus:
@@ -4708,3 +4901,120 @@ components:
           type: array
           items: { $ref: "#/components/schemas/HrAnalyticsEmployeeRow" }
       required: [month, year, totalActiveEmployees, attendance, payroll, leave, topPerformers, lateLeaders]
+
+    # ─── Rotation Pattern Schemas ───────────────────────────────────────────────
+
+    RotationPattern:
+      type: object
+      properties:
+        id:          { type: integer }
+        shopId:      { type: integer }
+        name:        { type: string }
+        nameBn:      { type: string }
+        cycleType:   { type: string, enum: [daily, weekly, monthly] }
+        cycleLength: { type: integer }
+        startDate:   { type: string, format: date }
+        isDefault:   { type: boolean }
+        isActive:    { type: boolean }
+        createdAt:   { type: string }
+        updatedAt:   { type: string }
+      required: [id, shopId, name, nameBn, cycleType, cycleLength, startDate, isDefault, isActive, createdAt, updatedAt]
+
+    RotationPatternSlot:
+      type: object
+      properties:
+        id:         { type: integer }
+        patternId:  { type: integer }
+        slotIndex:  { type: integer }
+        weekday:    { type: integer, nullable: true }
+        shiftId:    { type: integer, nullable: true }
+        shiftName:  { type: string, nullable: true }
+        shiftNameBn: { type: string, nullable: true }
+        shiftColor: { type: string, nullable: true }
+        shiftStartTime: { type: string, nullable: true }
+        shiftEndTime:   { type: string, nullable: true }
+        createdAt:  { type: string }
+        updatedAt:  { type: string }
+      required: [id, patternId, slotIndex, weekday, shiftId, shiftName, shiftNameBn, shiftColor, shiftStartTime, shiftEndTime, createdAt, updatedAt]
+
+    RotationPatternWithSlots:
+      allOf:
+        - $ref: "#/components/schemas/RotationPattern"
+        - type: object
+          properties:
+            slots:
+              type: array
+              items: { $ref: "#/components/schemas/RotationPatternSlot" }
+          required: [slots]
+
+    RotationSlotInput:
+      type: object
+      properties:
+        slotIndex: { type: integer }
+        weekday:   { type: integer, nullable: true }
+        shiftId:   { type: integer, nullable: true }
+      required: [slotIndex]
+
+    CreateRotationPatternBody:
+      type: object
+      properties:
+        name:        { type: string }
+        nameBn:      { type: string }
+        cycleType:   { type: string, enum: [daily, weekly, monthly] }
+        cycleLength: { type: integer, minimum: 1, maximum: 12 }
+        startDate:   { type: string, format: date }
+        isDefault:   { type: boolean }
+      required: [name, nameBn, cycleType, cycleLength, startDate]
+
+    UpdateRotationPatternBody:
+      type: object
+      properties:
+        name:        { type: string }
+        nameBn:      { type: string }
+        cycleType:   { type: string, enum: [daily, weekly, monthly] }
+        cycleLength: { type: integer, minimum: 1, maximum: 12 }
+        startDate:   { type: string, format: date }
+        isDefault:   { type: boolean }
+        isActive:    { type: boolean }
+
+    EmployeeRotationAssignment:
+      type: object
+      properties:
+        id:          { type: integer }
+        employeeId:  { type: integer }
+        patternId:   { type: integer }
+        patternName: { type: string }
+        patternNameBn: { type: string }
+        cycleType:   { type: string, enum: [daily, weekly, monthly] }
+        cycleLength: { type: integer }
+        startDate:   { type: string, format: date }
+        endDate:     { type: string, format: date, nullable: true }
+        createdAt:   { type: string }
+      required: [id, employeeId, patternId, patternName, patternNameBn, cycleType, cycleLength, startDate, endDate, createdAt]
+
+    RotationDaySlot:
+      type: object
+      properties:
+        weekday:        { type: integer }
+        shiftId:        { type: integer, nullable: true }
+        shiftName:      { type: string, nullable: true }
+        shiftNameBn:    { type: string, nullable: true }
+        shiftColor:     { type: string, nullable: true }
+        shiftStartTime: { type: string, nullable: true }
+        shiftEndTime:   { type: string, nullable: true }
+      required: [weekday, shiftId, shiftName, shiftNameBn, shiftColor, shiftStartTime, shiftEndTime]
+
+    EmployeeRotationSchedule:
+      type: object
+      properties:
+        hasRotation:     { type: boolean }
+        patternId:       { type: integer, nullable: true }
+        patternName:     { type: string, nullable: true }
+        patternNameBn:   { type: string, nullable: true }
+        cycleType:       { type: string, enum: [daily, weekly, monthly], nullable: true }
+        cycleLength:     { type: integer, nullable: true }
+        currentSlotIndex: { type: integer, nullable: true }
+        days:
+          type: array
+          items: { $ref: "#/components/schemas/RotationDaySlot" }
+      required: [hasRotation, patternId, patternName, patternNameBn, cycleType, cycleLength, currentSlotIndex, days]

@@ -33,6 +33,7 @@ import {
   AlertCircle,
   ExternalLink,
   CalendarDays,
+  RefreshCw,
 } from "lucide-react";
 import { EmployeeLeaveSection } from "@/components/leaves/EmployeeLeaveSection";
 
@@ -229,6 +230,126 @@ function DutyScheduleWidget({ employeeId }: { employeeId: number }) {
         )}
         {!isLoading && schedules.length === 0 && (
           <p className="text-xs text-muted-foreground text-center mt-3">{t("employeeProfile.noScheduleData")}</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ─── Rotation Schedule Widget ───────────────────────────────── */
+
+type RotationScheduleEntry = {
+  weekday:        number;
+  shiftId:        number | null;
+  shiftName:      string | null;
+  shiftNameBn:    string | null;
+  shiftColor:     string | null;
+  shiftStartTime: string | null;
+  shiftEndTime:   string | null;
+};
+
+type RotationScheduleDto = {
+  patternId:        number;
+  patternName:      string;
+  patternNameBn:    string;
+  cycleType:        "daily" | "weekly" | "monthly";
+  cycleLength:      number;
+  currentSlotIndex: number;
+  schedule:         RotationScheduleEntry[];
+};
+
+function RotationScheduleWidget({ employeeId }: { employeeId: number }) {
+  const { t, i18n } = useTranslation();
+  const isBn = i18n.language === "bn";
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["rotation-schedule", employeeId],
+    queryFn:  () => customFetch<RotationScheduleDto>(`/api/employees/${employeeId}/rotation-schedule`),
+    staleTime: 30_000,
+    retry: false,
+  });
+
+  const weekdays = [0, 1, 2, 3, 4, 5, 6] as const;
+
+  const cycleLabel = () => {
+    if (!data) return "";
+    const { cycleType, cycleLength, currentSlotIndex } = data;
+    const slotNum = currentSlotIndex + 1;
+    if (cycleType === "daily")   return `${t("schedule.rotation.day")} ${slotNum} ${t("schedule.rotation.slotOf", { total: cycleLength })}`;
+    if (cycleType === "weekly")  return `${t("schedule.rotation.week")} ${slotNum} ${t("schedule.rotation.slotOf", { total: cycleLength })}`;
+    return `${t("schedule.rotation.month")} ${slotNum} ${t("schedule.rotation.slotOf", { total: cycleLength })}`;
+  };
+
+  const scheduleMap = new Map<number, RotationScheduleEntry>();
+  for (const e of (data?.schedule ?? [])) {
+    scheduleMap.set(e.weekday, e);
+  }
+
+  return (
+    <Card className="border-border/60 shadow-sm">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-xl bg-orange-500/12 flex items-center justify-center">
+              <RefreshCw className="h-4 w-4 text-orange-500" />
+            </div>
+            <div>
+              <CardTitle className="text-sm font-semibold">
+                {t("schedule.rotation.title")}
+              </CardTitle>
+              {data && (
+                <p className="text-[10px] text-muted-foreground mt-0.5">{isBn ? data.patternNameBn : data.patternName}</p>
+              )}
+            </div>
+          </div>
+          {data && (
+            <div className="text-right">
+              <p className="text-[10px] text-muted-foreground">{t("schedule.rotation.currentCycle")}</p>
+              <p className="text-xs font-semibold text-orange-600">{cycleLabel()}</p>
+            </div>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="grid grid-cols-7 gap-1.5">
+            {weekdays.map((wd) => <Skeleton key={wd} className="h-14 rounded-xl" />)}
+          </div>
+        ) : isError || !data ? (
+          <p className="text-xs text-muted-foreground text-center py-4">{t("schedule.rotation.noRotation")}</p>
+        ) : (
+          <div className="grid grid-cols-7 gap-1.5">
+            {weekdays.map((wd) => {
+              const entry = scheduleMap.get(wd);
+              return (
+                <div key={wd} className="flex flex-col items-center gap-1">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest text-center">
+                    {t(`schedule.weekdaysShort.${wd}`)}
+                  </p>
+                  {entry ? (
+                    <div
+                      className="w-full rounded-xl border border-border/40 bg-muted/30 min-h-[52px] flex flex-col items-center justify-center gap-1 px-1"
+                      style={{ borderColor: entry.shiftColor ? `${entry.shiftColor}40` : undefined }}
+                    >
+                      <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: entry.shiftColor ?? "hsl(var(--primary))" }} />
+                      <p className="text-[9px] font-semibold text-center leading-tight break-words px-0.5" style={{ color: entry.shiftColor ?? undefined }}>
+                        {isBn ? (entry.shiftNameBn ?? entry.shiftName) : entry.shiftName}
+                      </p>
+                      {entry.shiftStartTime && (
+                        <p className="text-[8px] text-muted-foreground text-center leading-none">
+                          {entry.shiftStartTime.slice(0, 5)}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-full rounded-xl border border-dashed border-border/40 bg-muted/10 min-h-[52px] flex items-center justify-center">
+                      <p className="text-[10px] text-muted-foreground">—</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         )}
       </CardContent>
     </Card>
@@ -743,6 +864,11 @@ export default function EmployeeProfilePage() {
       {/* Duty Schedule Widget */}
       <motion.div variants={fadeInUp}>
         <DutyScheduleWidget employeeId={employeeId} />
+      </motion.div>
+
+      {/* Rotation Schedule Widget */}
+      <motion.div variants={fadeInUp}>
+        <RotationScheduleWidget employeeId={employeeId} />
       </motion.div>
 
       {/* Leave Summary & Requests */}

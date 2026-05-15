@@ -2650,3 +2650,233 @@ export const MarkPayrollPaidResponse = zod.object({
   createdAt: zod.string(),
   updatedAt: zod.string(),
 });
+
+/**
+ * @summary List rotation patterns for the shop
+ */
+export const GetRotationPatternsResponseItem = zod.object({
+  id: zod.number(),
+  shopId: zod.number(),
+  name: zod.string(),
+  nameBn: zod.string(),
+  cycleType: zod.enum(["daily", "weekly", "monthly"]),
+  cycleLength: zod.number(),
+  startDate: zod.coerce.date(),
+  isDefault: zod.boolean(),
+  isActive: zod.boolean(),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+export const GetRotationPatternsResponse = zod.array(
+  GetRotationPatternsResponseItem,
+);
+
+/**
+ * @summary Create a rotation pattern
+ */
+export const postRotationPatternsBodyCycleLengthMax = 12;
+
+export const PostRotationPatternsBody = zod.object({
+  name: zod.string(),
+  nameBn: zod.string(),
+  cycleType: zod.enum(["daily", "weekly", "monthly"]),
+  cycleLength: zod.number().min(1).max(postRotationPatternsBodyCycleLengthMax),
+  startDate: zod.coerce.date(),
+  isDefault: zod.boolean().optional(),
+});
+
+/**
+ * @summary Get a rotation pattern with its slots
+ */
+export const GetRotationPatternsIdParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetRotationPatternsIdResponse = zod
+  .object({
+    id: zod.number(),
+    shopId: zod.number(),
+    name: zod.string(),
+    nameBn: zod.string(),
+    cycleType: zod.enum(["daily", "weekly", "monthly"]),
+    cycleLength: zod.number(),
+    startDate: zod.coerce.date(),
+    isDefault: zod.boolean(),
+    isActive: zod.boolean(),
+    createdAt: zod.string(),
+    updatedAt: zod.string(),
+  })
+  .and(
+    zod.object({
+      slots: zod.array(
+        zod.object({
+          id: zod.number(),
+          patternId: zod.number(),
+          slotIndex: zod.number(),
+          weekday: zod.number().nullable(),
+          shiftId: zod.number().nullable(),
+          shiftName: zod.string().nullable(),
+          shiftNameBn: zod.string().nullable(),
+          shiftColor: zod.string().nullable(),
+          shiftStartTime: zod.string().nullable(),
+          shiftEndTime: zod.string().nullable(),
+          createdAt: zod.string(),
+          updatedAt: zod.string(),
+        }),
+      ),
+    }),
+  );
+
+/**
+ * @summary Update a rotation pattern
+ */
+export const PatchRotationPatternsIdParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const patchRotationPatternsIdBodyCycleLengthMax = 12;
+
+export const PatchRotationPatternsIdBody = zod.object({
+  name: zod.string().optional(),
+  nameBn: zod.string().optional(),
+  cycleType: zod.enum(["daily", "weekly", "monthly"]).optional(),
+  cycleLength: zod
+    .number()
+    .min(1)
+    .max(patchRotationPatternsIdBodyCycleLengthMax)
+    .optional(),
+  startDate: zod.coerce.date().optional(),
+  isDefault: zod.boolean().optional(),
+  isActive: zod.boolean().optional(),
+});
+
+export const PatchRotationPatternsIdResponse = zod.object({
+  id: zod.number(),
+  shopId: zod.number(),
+  name: zod.string(),
+  nameBn: zod.string(),
+  cycleType: zod.enum(["daily", "weekly", "monthly"]),
+  cycleLength: zod.number(),
+  startDate: zod.coerce.date(),
+  isDefault: zod.boolean(),
+  isActive: zod.boolean(),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Delete a rotation pattern
+ */
+export const DeleteRotationPatternsIdParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteRotationPatternsIdResponse = zod.object({
+  ok: zod.boolean().optional(),
+});
+
+/**
+ * @summary Bulk-replace all slots for a rotation pattern
+ */
+export const PutRotationPatternsIdSlotsParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const PutRotationPatternsIdSlotsBody = zod.object({
+  slots: zod.array(
+    zod.object({
+      slotIndex: zod.number(),
+      weekday: zod.number().nullish(),
+      shiftId: zod.number().nullish(),
+    }),
+  ),
+});
+
+export const PutRotationPatternsIdSlotsResponseItem = zod.object({
+  id: zod.number(),
+  patternId: zod.number(),
+  slotIndex: zod.number(),
+  weekday: zod.number().nullable(),
+  shiftId: zod.number().nullable(),
+  shiftName: zod.string().nullable(),
+  shiftNameBn: zod.string().nullable(),
+  shiftColor: zod.string().nullable(),
+  shiftStartTime: zod.string().nullable(),
+  shiftEndTime: zod.string().nullable(),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+export const PutRotationPatternsIdSlotsResponse = zod.array(
+  PutRotationPatternsIdSlotsResponseItem,
+);
+
+/**
+ * @summary Get the active rotation assignment for an employee
+ */
+export const GetEmployeesIdRotationParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetEmployeesIdRotationResponse = zod.object({
+  id: zod.number(),
+  employeeId: zod.number(),
+  patternId: zod.number(),
+  patternName: zod.string(),
+  patternNameBn: zod.string(),
+  cycleType: zod.enum(["daily", "weekly", "monthly"]),
+  cycleLength: zod.number(),
+  startDate: zod.coerce.date(),
+  endDate: zod.coerce.date().nullable(),
+  createdAt: zod.string(),
+});
+
+/**
+ * @summary Assign or replace the rotation pattern for an employee
+ */
+export const PostEmployeesIdRotationParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const PostEmployeesIdRotationBody = zod.object({
+  patternId: zod.number(),
+  startDate: zod.coerce.date(),
+});
+
+/**
+ * @summary Remove the active rotation assignment for an employee
+ */
+export const DeleteEmployeesIdRotationParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteEmployeesIdRotationResponse = zod.object({
+  ok: zod.boolean().optional(),
+});
+
+/**
+ * @summary Get the computed effective rotation schedule for an employee
+ */
+export const GetEmployeesIdRotationScheduleParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetEmployeesIdRotationScheduleResponse = zod.object({
+  hasRotation: zod.boolean(),
+  patternId: zod.number().nullable(),
+  patternName: zod.string().nullable(),
+  patternNameBn: zod.string().nullable(),
+  cycleType: zod.enum(["daily", "weekly", "monthly"]).nullable(),
+  cycleLength: zod.number().nullable(),
+  currentSlotIndex: zod.number().nullable(),
+  days: zod.array(
+    zod.object({
+      weekday: zod.number(),
+      shiftId: zod.number().nullable(),
+      shiftName: zod.string().nullable(),
+      shiftNameBn: zod.string().nullable(),
+      shiftColor: zod.string().nullable(),
+      shiftStartTime: zod.string().nullable(),
+      shiftEndTime: zod.string().nullable(),
+    }),
+  ),
+});

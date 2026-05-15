@@ -38,6 +38,7 @@ import type {
   CreateLeaveTypeRequest,
   CreateProductBody,
   CreatePurchaseBody,
+  CreateRotationPatternBody,
   CreateSalaryGradeBody,
   CreateSaleBody,
   CreateScheduleRequest,
@@ -46,10 +47,14 @@ import type {
   CustomRoleItem,
   Customer,
   DashboardSummary,
+  DeleteEmployeesIdRotation200,
+  DeleteRotationPatternsId200,
   DeleteSchedule200,
   DeleteShift200,
   DueReport,
   DutySchedule,
+  EmployeeRotationAssignment,
+  EmployeeRotationSchedule,
   ErrorResponse,
   GeneratePayroll201,
   GeneratePayrollBody,
@@ -95,18 +100,23 @@ import type {
   PayPurchaseDueBody,
   PayrollRecord,
   PayrollStats,
+  PostEmployeesIdRotationBody,
   Product,
   ProductReport,
   ProfitReport,
   Purchase,
   PurchaseDetail,
   PurchaseStats,
+  PutRotationPatternsIdSlotsBody,
   RefreshBody,
   RefreshResponse,
   RegisterBody,
   RegisterPendingResponse,
   RejectLeaveRequestBody,
   RolePermissionsResponse,
+  RotationPattern,
+  RotationPatternSlot,
+  RotationPatternWithSlots,
   SalaryGrade,
   Sale,
   SaleDetail,
@@ -127,6 +137,7 @@ import type {
   UpdatePayrollRecordBody,
   UpdateProductBody,
   UpdateRolePermissionsBody,
+  UpdateRotationPatternBody,
   UpdateSalaryGradeBody,
   UpdateScheduleRequest,
   UpdateShiftRequest,
@@ -10100,3 +10111,886 @@ export const useMarkPayrollPaid = <
 > => {
   return useMutation(getMarkPayrollPaidMutationOptions(options));
 };
+
+/**
+ * @summary List rotation patterns for the shop
+ */
+export const getGetRotationPatternsUrl = () => {
+  return `/api/rotation-patterns`;
+};
+
+export const getRotationPatterns = async (
+  options?: RequestInit,
+): Promise<RotationPattern[]> => {
+  return customFetch<RotationPattern[]>(getGetRotationPatternsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetRotationPatternsQueryKey = () => {
+  return [`/api/rotation-patterns`] as const;
+};
+
+export const getGetRotationPatternsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRotationPatterns>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getRotationPatterns>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetRotationPatternsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getRotationPatterns>>
+  > = ({ signal }) => getRotationPatterns({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getRotationPatterns>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetRotationPatternsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRotationPatterns>>
+>;
+export type GetRotationPatternsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List rotation patterns for the shop
+ */
+
+export function useGetRotationPatterns<
+  TData = Awaited<ReturnType<typeof getRotationPatterns>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getRotationPatterns>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetRotationPatternsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a rotation pattern
+ */
+export const getPostRotationPatternsUrl = () => {
+  return `/api/rotation-patterns`;
+};
+
+export const postRotationPatterns = async (
+  createRotationPatternBody: CreateRotationPatternBody,
+  options?: RequestInit,
+): Promise<RotationPattern> => {
+  return customFetch<RotationPattern>(getPostRotationPatternsUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createRotationPatternBody),
+  });
+};
+
+export const getPostRotationPatternsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRotationPatterns>>,
+    TError,
+    { data: BodyType<CreateRotationPatternBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postRotationPatterns>>,
+  TError,
+  { data: BodyType<CreateRotationPatternBody> },
+  TContext
+> => {
+  const mutationKey = ["postRotationPatterns"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postRotationPatterns>>,
+    { data: BodyType<CreateRotationPatternBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return postRotationPatterns(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostRotationPatternsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postRotationPatterns>>
+>;
+export type PostRotationPatternsMutationBody =
+  BodyType<CreateRotationPatternBody>;
+export type PostRotationPatternsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a rotation pattern
+ */
+export const usePostRotationPatterns = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postRotationPatterns>>,
+    TError,
+    { data: BodyType<CreateRotationPatternBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof postRotationPatterns>>,
+  TError,
+  { data: BodyType<CreateRotationPatternBody> },
+  TContext
+> => {
+  return useMutation(getPostRotationPatternsMutationOptions(options));
+};
+
+/**
+ * @summary Get a rotation pattern with its slots
+ */
+export const getGetRotationPatternsIdUrl = (id: number) => {
+  return `/api/rotation-patterns/${id}`;
+};
+
+export const getRotationPatternsId = async (
+  id: number,
+  options?: RequestInit,
+): Promise<RotationPatternWithSlots> => {
+  return customFetch<RotationPatternWithSlots>(
+    getGetRotationPatternsIdUrl(id),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetRotationPatternsIdQueryKey = (id: number) => {
+  return [`/api/rotation-patterns/${id}`] as const;
+};
+
+export const getGetRotationPatternsIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRotationPatternsId>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getRotationPatternsId>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetRotationPatternsIdQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getRotationPatternsId>>
+  > = ({ signal }) => getRotationPatternsId(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getRotationPatternsId>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetRotationPatternsIdQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRotationPatternsId>>
+>;
+export type GetRotationPatternsIdQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get a rotation pattern with its slots
+ */
+
+export function useGetRotationPatternsId<
+  TData = Awaited<ReturnType<typeof getRotationPatternsId>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getRotationPatternsId>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetRotationPatternsIdQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update a rotation pattern
+ */
+export const getPatchRotationPatternsIdUrl = (id: number) => {
+  return `/api/rotation-patterns/${id}`;
+};
+
+export const patchRotationPatternsId = async (
+  id: number,
+  updateRotationPatternBody: UpdateRotationPatternBody,
+  options?: RequestInit,
+): Promise<RotationPattern> => {
+  return customFetch<RotationPattern>(getPatchRotationPatternsIdUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateRotationPatternBody),
+  });
+};
+
+export const getPatchRotationPatternsIdMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof patchRotationPatternsId>>,
+    TError,
+    { id: number; data: BodyType<UpdateRotationPatternBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof patchRotationPatternsId>>,
+  TError,
+  { id: number; data: BodyType<UpdateRotationPatternBody> },
+  TContext
+> => {
+  const mutationKey = ["patchRotationPatternsId"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof patchRotationPatternsId>>,
+    { id: number; data: BodyType<UpdateRotationPatternBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return patchRotationPatternsId(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PatchRotationPatternsIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof patchRotationPatternsId>>
+>;
+export type PatchRotationPatternsIdMutationBody =
+  BodyType<UpdateRotationPatternBody>;
+export type PatchRotationPatternsIdMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update a rotation pattern
+ */
+export const usePatchRotationPatternsId = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof patchRotationPatternsId>>,
+    TError,
+    { id: number; data: BodyType<UpdateRotationPatternBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof patchRotationPatternsId>>,
+  TError,
+  { id: number; data: BodyType<UpdateRotationPatternBody> },
+  TContext
+> => {
+  return useMutation(getPatchRotationPatternsIdMutationOptions(options));
+};
+
+/**
+ * @summary Delete a rotation pattern
+ */
+export const getDeleteRotationPatternsIdUrl = (id: number) => {
+  return `/api/rotation-patterns/${id}`;
+};
+
+export const deleteRotationPatternsId = async (
+  id: number,
+  options?: RequestInit,
+): Promise<DeleteRotationPatternsId200> => {
+  return customFetch<DeleteRotationPatternsId200>(
+    getDeleteRotationPatternsIdUrl(id),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getDeleteRotationPatternsIdMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteRotationPatternsId>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteRotationPatternsId>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteRotationPatternsId"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteRotationPatternsId>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteRotationPatternsId(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteRotationPatternsIdMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteRotationPatternsId>>
+>;
+
+export type DeleteRotationPatternsIdMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a rotation pattern
+ */
+export const useDeleteRotationPatternsId = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteRotationPatternsId>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteRotationPatternsId>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteRotationPatternsIdMutationOptions(options));
+};
+
+/**
+ * @summary Bulk-replace all slots for a rotation pattern
+ */
+export const getPutRotationPatternsIdSlotsUrl = (id: number) => {
+  return `/api/rotation-patterns/${id}/slots`;
+};
+
+export const putRotationPatternsIdSlots = async (
+  id: number,
+  putRotationPatternsIdSlotsBody: PutRotationPatternsIdSlotsBody,
+  options?: RequestInit,
+): Promise<RotationPatternSlot[]> => {
+  return customFetch<RotationPatternSlot[]>(
+    getPutRotationPatternsIdSlotsUrl(id),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(putRotationPatternsIdSlotsBody),
+    },
+  );
+};
+
+export const getPutRotationPatternsIdSlotsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putRotationPatternsIdSlots>>,
+    TError,
+    { id: number; data: BodyType<PutRotationPatternsIdSlotsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof putRotationPatternsIdSlots>>,
+  TError,
+  { id: number; data: BodyType<PutRotationPatternsIdSlotsBody> },
+  TContext
+> => {
+  const mutationKey = ["putRotationPatternsIdSlots"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof putRotationPatternsIdSlots>>,
+    { id: number; data: BodyType<PutRotationPatternsIdSlotsBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return putRotationPatternsIdSlots(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PutRotationPatternsIdSlotsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof putRotationPatternsIdSlots>>
+>;
+export type PutRotationPatternsIdSlotsMutationBody =
+  BodyType<PutRotationPatternsIdSlotsBody>;
+export type PutRotationPatternsIdSlotsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Bulk-replace all slots for a rotation pattern
+ */
+export const usePutRotationPatternsIdSlots = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof putRotationPatternsIdSlots>>,
+    TError,
+    { id: number; data: BodyType<PutRotationPatternsIdSlotsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof putRotationPatternsIdSlots>>,
+  TError,
+  { id: number; data: BodyType<PutRotationPatternsIdSlotsBody> },
+  TContext
+> => {
+  return useMutation(getPutRotationPatternsIdSlotsMutationOptions(options));
+};
+
+/**
+ * @summary Get the active rotation assignment for an employee
+ */
+export const getGetEmployeesIdRotationUrl = (id: number) => {
+  return `/api/employees/${id}/rotation`;
+};
+
+export const getEmployeesIdRotation = async (
+  id: number,
+  options?: RequestInit,
+): Promise<EmployeeRotationAssignment> => {
+  return customFetch<EmployeeRotationAssignment>(
+    getGetEmployeesIdRotationUrl(id),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetEmployeesIdRotationQueryKey = (id: number) => {
+  return [`/api/employees/${id}/rotation`] as const;
+};
+
+export const getGetEmployeesIdRotationQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEmployeesIdRotation>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmployeesIdRotation>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetEmployeesIdRotationQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getEmployeesIdRotation>>
+  > = ({ signal }) => getEmployeesIdRotation(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEmployeesIdRotation>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetEmployeesIdRotationQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEmployeesIdRotation>>
+>;
+export type GetEmployeesIdRotationQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get the active rotation assignment for an employee
+ */
+
+export function useGetEmployeesIdRotation<
+  TData = Awaited<ReturnType<typeof getEmployeesIdRotation>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmployeesIdRotation>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetEmployeesIdRotationQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Assign or replace the rotation pattern for an employee
+ */
+export const getPostEmployeesIdRotationUrl = (id: number) => {
+  return `/api/employees/${id}/rotation`;
+};
+
+export const postEmployeesIdRotation = async (
+  id: number,
+  postEmployeesIdRotationBody: PostEmployeesIdRotationBody,
+  options?: RequestInit,
+): Promise<EmployeeRotationAssignment> => {
+  return customFetch<EmployeeRotationAssignment>(
+    getPostEmployeesIdRotationUrl(id),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(postEmployeesIdRotationBody),
+    },
+  );
+};
+
+export const getPostEmployeesIdRotationMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postEmployeesIdRotation>>,
+    TError,
+    { id: number; data: BodyType<PostEmployeesIdRotationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof postEmployeesIdRotation>>,
+  TError,
+  { id: number; data: BodyType<PostEmployeesIdRotationBody> },
+  TContext
+> => {
+  const mutationKey = ["postEmployeesIdRotation"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof postEmployeesIdRotation>>,
+    { id: number; data: BodyType<PostEmployeesIdRotationBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return postEmployeesIdRotation(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PostEmployeesIdRotationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof postEmployeesIdRotation>>
+>;
+export type PostEmployeesIdRotationMutationBody =
+  BodyType<PostEmployeesIdRotationBody>;
+export type PostEmployeesIdRotationMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Assign or replace the rotation pattern for an employee
+ */
+export const usePostEmployeesIdRotation = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof postEmployeesIdRotation>>,
+    TError,
+    { id: number; data: BodyType<PostEmployeesIdRotationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof postEmployeesIdRotation>>,
+  TError,
+  { id: number; data: BodyType<PostEmployeesIdRotationBody> },
+  TContext
+> => {
+  return useMutation(getPostEmployeesIdRotationMutationOptions(options));
+};
+
+/**
+ * @summary Remove the active rotation assignment for an employee
+ */
+export const getDeleteEmployeesIdRotationUrl = (id: number) => {
+  return `/api/employees/${id}/rotation`;
+};
+
+export const deleteEmployeesIdRotation = async (
+  id: number,
+  options?: RequestInit,
+): Promise<DeleteEmployeesIdRotation200> => {
+  return customFetch<DeleteEmployeesIdRotation200>(
+    getDeleteEmployeesIdRotationUrl(id),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getDeleteEmployeesIdRotationMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteEmployeesIdRotation>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteEmployeesIdRotation>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteEmployeesIdRotation"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteEmployeesIdRotation>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteEmployeesIdRotation(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteEmployeesIdRotationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteEmployeesIdRotation>>
+>;
+
+export type DeleteEmployeesIdRotationMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Remove the active rotation assignment for an employee
+ */
+export const useDeleteEmployeesIdRotation = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteEmployeesIdRotation>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteEmployeesIdRotation>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteEmployeesIdRotationMutationOptions(options));
+};
+
+/**
+ * @summary Get the computed effective rotation schedule for an employee
+ */
+export const getGetEmployeesIdRotationScheduleUrl = (id: number) => {
+  return `/api/employees/${id}/rotation-schedule`;
+};
+
+export const getEmployeesIdRotationSchedule = async (
+  id: number,
+  options?: RequestInit,
+): Promise<EmployeeRotationSchedule> => {
+  return customFetch<EmployeeRotationSchedule>(
+    getGetEmployeesIdRotationScheduleUrl(id),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetEmployeesIdRotationScheduleQueryKey = (id: number) => {
+  return [`/api/employees/${id}/rotation-schedule`] as const;
+};
+
+export const getGetEmployeesIdRotationScheduleQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetEmployeesIdRotationScheduleQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>
+  > = ({ signal }) =>
+    getEmployeesIdRotationSchedule(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetEmployeesIdRotationScheduleQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>
+>;
+export type GetEmployeesIdRotationScheduleQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get the computed effective rotation schedule for an employee
+ */
+
+export function useGetEmployeesIdRotationSchedule<
+  TData = Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetEmployeesIdRotationScheduleQueryOptions(
+    id,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}

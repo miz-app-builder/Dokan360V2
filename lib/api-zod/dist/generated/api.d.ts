@@ -6799,4 +6799,591 @@ export declare const MarkPayrollPaidResponse: zod.ZodObject<{
     employeeCode?: string | null | undefined;
     paidAt?: string | null | undefined;
 }>;
+/**
+ * @summary List rotation patterns for the shop
+ */
+export declare const GetRotationPatternsResponseItem: zod.ZodObject<{
+    id: zod.ZodNumber;
+    shopId: zod.ZodNumber;
+    name: zod.ZodString;
+    nameBn: zod.ZodString;
+    cycleType: zod.ZodEnum<["daily", "weekly", "monthly"]>;
+    cycleLength: zod.ZodNumber;
+    startDate: zod.ZodDate;
+    isDefault: zod.ZodBoolean;
+    isActive: zod.ZodBoolean;
+    createdAt: zod.ZodString;
+    updatedAt: zod.ZodString;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}>;
+export declare const GetRotationPatternsResponse: zod.ZodArray<zod.ZodObject<{
+    id: zod.ZodNumber;
+    shopId: zod.ZodNumber;
+    name: zod.ZodString;
+    nameBn: zod.ZodString;
+    cycleType: zod.ZodEnum<["daily", "weekly", "monthly"]>;
+    cycleLength: zod.ZodNumber;
+    startDate: zod.ZodDate;
+    isDefault: zod.ZodBoolean;
+    isActive: zod.ZodBoolean;
+    createdAt: zod.ZodString;
+    updatedAt: zod.ZodString;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}>, "many">;
+/**
+ * @summary Create a rotation pattern
+ */
+export declare const postRotationPatternsBodyCycleLengthMax = 12;
+export declare const PostRotationPatternsBody: zod.ZodObject<{
+    name: zod.ZodString;
+    nameBn: zod.ZodString;
+    cycleType: zod.ZodEnum<["daily", "weekly", "monthly"]>;
+    cycleLength: zod.ZodNumber;
+    startDate: zod.ZodDate;
+    isDefault: zod.ZodOptional<zod.ZodBoolean>;
+}, "strip", zod.ZodTypeAny, {
+    name: string;
+    nameBn: string;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+    isDefault?: boolean | undefined;
+}, {
+    name: string;
+    nameBn: string;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+    isDefault?: boolean | undefined;
+}>;
+/**
+ * @summary Get a rotation pattern with its slots
+ */
+export declare const GetRotationPatternsIdParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const GetRotationPatternsIdResponse: zod.ZodIntersection<zod.ZodObject<{
+    id: zod.ZodNumber;
+    shopId: zod.ZodNumber;
+    name: zod.ZodString;
+    nameBn: zod.ZodString;
+    cycleType: zod.ZodEnum<["daily", "weekly", "monthly"]>;
+    cycleLength: zod.ZodNumber;
+    startDate: zod.ZodDate;
+    isDefault: zod.ZodBoolean;
+    isActive: zod.ZodBoolean;
+    createdAt: zod.ZodString;
+    updatedAt: zod.ZodString;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}>, zod.ZodObject<{
+    slots: zod.ZodArray<zod.ZodObject<{
+        id: zod.ZodNumber;
+        patternId: zod.ZodNumber;
+        slotIndex: zod.ZodNumber;
+        weekday: zod.ZodNullable<zod.ZodNumber>;
+        shiftId: zod.ZodNullable<zod.ZodNumber>;
+        shiftName: zod.ZodNullable<zod.ZodString>;
+        shiftNameBn: zod.ZodNullable<zod.ZodString>;
+        shiftColor: zod.ZodNullable<zod.ZodString>;
+        shiftStartTime: zod.ZodNullable<zod.ZodString>;
+        shiftEndTime: zod.ZodNullable<zod.ZodString>;
+        createdAt: zod.ZodString;
+        updatedAt: zod.ZodString;
+    }, "strip", zod.ZodTypeAny, {
+        id: number;
+        createdAt: string;
+        updatedAt: string;
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number | null;
+        patternId: number;
+        slotIndex: number;
+    }, {
+        id: number;
+        createdAt: string;
+        updatedAt: string;
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number | null;
+        patternId: number;
+        slotIndex: number;
+    }>, "many">;
+}, "strip", zod.ZodTypeAny, {
+    slots: {
+        id: number;
+        createdAt: string;
+        updatedAt: string;
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number | null;
+        patternId: number;
+        slotIndex: number;
+    }[];
+}, {
+    slots: {
+        id: number;
+        createdAt: string;
+        updatedAt: string;
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number | null;
+        patternId: number;
+        slotIndex: number;
+    }[];
+}>>;
+/**
+ * @summary Update a rotation pattern
+ */
+export declare const PatchRotationPatternsIdParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const patchRotationPatternsIdBodyCycleLengthMax = 12;
+export declare const PatchRotationPatternsIdBody: zod.ZodObject<{
+    name: zod.ZodOptional<zod.ZodString>;
+    nameBn: zod.ZodOptional<zod.ZodString>;
+    cycleType: zod.ZodOptional<zod.ZodEnum<["daily", "weekly", "monthly"]>>;
+    cycleLength: zod.ZodOptional<zod.ZodNumber>;
+    startDate: zod.ZodOptional<zod.ZodDate>;
+    isDefault: zod.ZodOptional<zod.ZodBoolean>;
+    isActive: zod.ZodOptional<zod.ZodBoolean>;
+}, "strip", zod.ZodTypeAny, {
+    name?: string | undefined;
+    isActive?: boolean | undefined;
+    nameBn?: string | undefined;
+    isDefault?: boolean | undefined;
+    cycleType?: "weekly" | "daily" | "monthly" | undefined;
+    cycleLength?: number | undefined;
+    startDate?: Date | undefined;
+}, {
+    name?: string | undefined;
+    isActive?: boolean | undefined;
+    nameBn?: string | undefined;
+    isDefault?: boolean | undefined;
+    cycleType?: "weekly" | "daily" | "monthly" | undefined;
+    cycleLength?: number | undefined;
+    startDate?: Date | undefined;
+}>;
+export declare const PatchRotationPatternsIdResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    shopId: zod.ZodNumber;
+    name: zod.ZodString;
+    nameBn: zod.ZodString;
+    cycleType: zod.ZodEnum<["daily", "weekly", "monthly"]>;
+    cycleLength: zod.ZodNumber;
+    startDate: zod.ZodDate;
+    isDefault: zod.ZodBoolean;
+    isActive: zod.ZodBoolean;
+    createdAt: zod.ZodString;
+    updatedAt: zod.ZodString;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}, {
+    id: number;
+    name: string;
+    isActive: boolean;
+    shopId: number;
+    createdAt: string;
+    nameBn: string;
+    updatedAt: string;
+    isDefault: boolean;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+}>;
+/**
+ * @summary Delete a rotation pattern
+ */
+export declare const DeleteRotationPatternsIdParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const DeleteRotationPatternsIdResponse: zod.ZodObject<{
+    ok: zod.ZodOptional<zod.ZodBoolean>;
+}, "strip", zod.ZodTypeAny, {
+    ok?: boolean | undefined;
+}, {
+    ok?: boolean | undefined;
+}>;
+/**
+ * @summary Bulk-replace all slots for a rotation pattern
+ */
+export declare const PutRotationPatternsIdSlotsParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const PutRotationPatternsIdSlotsBody: zod.ZodObject<{
+    slots: zod.ZodArray<zod.ZodObject<{
+        slotIndex: zod.ZodNumber;
+        weekday: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+        shiftId: zod.ZodOptional<zod.ZodNullable<zod.ZodNumber>>;
+    }, "strip", zod.ZodTypeAny, {
+        slotIndex: number;
+        shiftId?: number | null | undefined;
+        weekday?: number | null | undefined;
+    }, {
+        slotIndex: number;
+        shiftId?: number | null | undefined;
+        weekday?: number | null | undefined;
+    }>, "many">;
+}, "strip", zod.ZodTypeAny, {
+    slots: {
+        slotIndex: number;
+        shiftId?: number | null | undefined;
+        weekday?: number | null | undefined;
+    }[];
+}, {
+    slots: {
+        slotIndex: number;
+        shiftId?: number | null | undefined;
+        weekday?: number | null | undefined;
+    }[];
+}>;
+export declare const PutRotationPatternsIdSlotsResponseItem: zod.ZodObject<{
+    id: zod.ZodNumber;
+    patternId: zod.ZodNumber;
+    slotIndex: zod.ZodNumber;
+    weekday: zod.ZodNullable<zod.ZodNumber>;
+    shiftId: zod.ZodNullable<zod.ZodNumber>;
+    shiftName: zod.ZodNullable<zod.ZodString>;
+    shiftNameBn: zod.ZodNullable<zod.ZodString>;
+    shiftColor: zod.ZodNullable<zod.ZodString>;
+    shiftStartTime: zod.ZodNullable<zod.ZodString>;
+    shiftEndTime: zod.ZodNullable<zod.ZodString>;
+    createdAt: zod.ZodString;
+    updatedAt: zod.ZodString;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    shiftId: number | null;
+    shiftName: string | null;
+    shiftNameBn: string | null;
+    shiftStartTime: string | null;
+    shiftEndTime: string | null;
+    shiftColor: string | null;
+    weekday: number | null;
+    patternId: number;
+    slotIndex: number;
+}, {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    shiftId: number | null;
+    shiftName: string | null;
+    shiftNameBn: string | null;
+    shiftStartTime: string | null;
+    shiftEndTime: string | null;
+    shiftColor: string | null;
+    weekday: number | null;
+    patternId: number;
+    slotIndex: number;
+}>;
+export declare const PutRotationPatternsIdSlotsResponse: zod.ZodArray<zod.ZodObject<{
+    id: zod.ZodNumber;
+    patternId: zod.ZodNumber;
+    slotIndex: zod.ZodNumber;
+    weekday: zod.ZodNullable<zod.ZodNumber>;
+    shiftId: zod.ZodNullable<zod.ZodNumber>;
+    shiftName: zod.ZodNullable<zod.ZodString>;
+    shiftNameBn: zod.ZodNullable<zod.ZodString>;
+    shiftColor: zod.ZodNullable<zod.ZodString>;
+    shiftStartTime: zod.ZodNullable<zod.ZodString>;
+    shiftEndTime: zod.ZodNullable<zod.ZodString>;
+    createdAt: zod.ZodString;
+    updatedAt: zod.ZodString;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    shiftId: number | null;
+    shiftName: string | null;
+    shiftNameBn: string | null;
+    shiftStartTime: string | null;
+    shiftEndTime: string | null;
+    shiftColor: string | null;
+    weekday: number | null;
+    patternId: number;
+    slotIndex: number;
+}, {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    shiftId: number | null;
+    shiftName: string | null;
+    shiftNameBn: string | null;
+    shiftStartTime: string | null;
+    shiftEndTime: string | null;
+    shiftColor: string | null;
+    weekday: number | null;
+    patternId: number;
+    slotIndex: number;
+}>, "many">;
+/**
+ * @summary Get the active rotation assignment for an employee
+ */
+export declare const GetEmployeesIdRotationParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const GetEmployeesIdRotationResponse: zod.ZodObject<{
+    id: zod.ZodNumber;
+    employeeId: zod.ZodNumber;
+    patternId: zod.ZodNumber;
+    patternName: zod.ZodString;
+    patternNameBn: zod.ZodString;
+    cycleType: zod.ZodEnum<["daily", "weekly", "monthly"]>;
+    cycleLength: zod.ZodNumber;
+    startDate: zod.ZodDate;
+    endDate: zod.ZodNullable<zod.ZodDate>;
+    createdAt: zod.ZodString;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+    createdAt: string;
+    employeeId: number;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+    patternId: number;
+    patternName: string;
+    patternNameBn: string;
+    endDate: Date | null;
+}, {
+    id: number;
+    createdAt: string;
+    employeeId: number;
+    cycleType: "weekly" | "daily" | "monthly";
+    cycleLength: number;
+    startDate: Date;
+    patternId: number;
+    patternName: string;
+    patternNameBn: string;
+    endDate: Date | null;
+}>;
+/**
+ * @summary Assign or replace the rotation pattern for an employee
+ */
+export declare const PostEmployeesIdRotationParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const PostEmployeesIdRotationBody: zod.ZodObject<{
+    patternId: zod.ZodNumber;
+    startDate: zod.ZodDate;
+}, "strip", zod.ZodTypeAny, {
+    startDate: Date;
+    patternId: number;
+}, {
+    startDate: Date;
+    patternId: number;
+}>;
+/**
+ * @summary Remove the active rotation assignment for an employee
+ */
+export declare const DeleteEmployeesIdRotationParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const DeleteEmployeesIdRotationResponse: zod.ZodObject<{
+    ok: zod.ZodOptional<zod.ZodBoolean>;
+}, "strip", zod.ZodTypeAny, {
+    ok?: boolean | undefined;
+}, {
+    ok?: boolean | undefined;
+}>;
+/**
+ * @summary Get the computed effective rotation schedule for an employee
+ */
+export declare const GetEmployeesIdRotationScheduleParams: zod.ZodObject<{
+    id: zod.ZodNumber;
+}, "strip", zod.ZodTypeAny, {
+    id: number;
+}, {
+    id: number;
+}>;
+export declare const GetEmployeesIdRotationScheduleResponse: zod.ZodObject<{
+    hasRotation: zod.ZodBoolean;
+    patternId: zod.ZodNullable<zod.ZodNumber>;
+    patternName: zod.ZodNullable<zod.ZodString>;
+    patternNameBn: zod.ZodNullable<zod.ZodString>;
+    cycleType: zod.ZodNullable<zod.ZodEnum<["daily", "weekly", "monthly"]>>;
+    cycleLength: zod.ZodNullable<zod.ZodNumber>;
+    currentSlotIndex: zod.ZodNullable<zod.ZodNumber>;
+    days: zod.ZodArray<zod.ZodObject<{
+        weekday: zod.ZodNumber;
+        shiftId: zod.ZodNullable<zod.ZodNumber>;
+        shiftName: zod.ZodNullable<zod.ZodString>;
+        shiftNameBn: zod.ZodNullable<zod.ZodString>;
+        shiftColor: zod.ZodNullable<zod.ZodString>;
+        shiftStartTime: zod.ZodNullable<zod.ZodString>;
+        shiftEndTime: zod.ZodNullable<zod.ZodString>;
+    }, "strip", zod.ZodTypeAny, {
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number;
+    }, {
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number;
+    }>, "many">;
+}, "strip", zod.ZodTypeAny, {
+    days: {
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number;
+    }[];
+    cycleType: "weekly" | "daily" | "monthly" | null;
+    cycleLength: number | null;
+    patternId: number | null;
+    patternName: string | null;
+    patternNameBn: string | null;
+    hasRotation: boolean;
+    currentSlotIndex: number | null;
+}, {
+    days: {
+        shiftId: number | null;
+        shiftName: string | null;
+        shiftNameBn: string | null;
+        shiftStartTime: string | null;
+        shiftEndTime: string | null;
+        shiftColor: string | null;
+        weekday: number;
+    }[];
+    cycleType: "weekly" | "daily" | "monthly" | null;
+    cycleLength: number | null;
+    patternId: number | null;
+    patternName: string | null;
+    patternNameBn: string | null;
+    hasRotation: boolean;
+    currentSlotIndex: number | null;
+}>;
 //# sourceMappingURL=api.d.ts.map

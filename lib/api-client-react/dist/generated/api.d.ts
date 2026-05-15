@@ -1,5 +1,5 @@
 import type { QueryKey, UseMutationOptions, UseMutationResult, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
-import type { AdjustInventoryBody, AnalyticsPeriodPoint, ApproveLeaveRequestBody, AttendanceListResponse, AttendanceRecord, AttendanceReportResponse, AuditLogsResponse, AuthResponse, CalendarScheduleResponse, Category, CheckInRequest, CheckOutRequest, CollectPaymentBody, CreateAttendanceRequest, CreateCategoryBody, CreateCustomRoleBody, CreateCustomerBody, CreateLeaveRequestBody, CreateLeaveTypeRequest, CreateProductBody, CreatePurchaseBody, CreateSalaryGradeBody, CreateSaleBody, CreateScheduleRequest, CreateShiftRequest, CreateSupplierBody, CustomRoleItem, Customer, DashboardSummary, DeleteSchedule200, DeleteShift200, DueReport, DutySchedule, ErrorResponse, GeneratePayroll201, GeneratePayrollBody, GetAttendanceReportParams, GetAuditLogsParams, GetCalendarScheduleParams, GetDashboardAnalyticsParams, GetEmployeePayrollHistoryParams, GetHrAnalyticsParams, GetPayrollStatsParams, GetProductReportParams, GetProfitReportParams, GetSalesReportParams, GetStaffReportParams, HealthStatus, HeatmapPoint, HrAnalytics, InventoryAdjustment, InventoryItem, InventoryReport, InviteUserBody, LeaveBalance, LeaveRequest, LeaveRequestListResponse, LeaveType, LedgerEntry, ListAttendanceParams, ListCustomersParams, ListLeaveBalancesParams, ListLeaveRequestsParams, ListPayrollParams, ListProductsParams, ListSalesParams, ListSchedulesParams, ListSuppliersParams, LoginBody, LogoutBody, MarkAllNotificationsRead200, MarkPayrollPaidBody, Notification, NotificationCount, OkResponse, PayPurchaseDueBody, PayrollRecord, PayrollStats, Product, ProductReport, ProfitReport, Purchase, PurchaseDetail, PurchaseStats, RefreshBody, RefreshResponse, RegisterBody, RegisterPendingResponse, RejectLeaveRequestBody, RolePermissionsResponse, SalaryGrade, Sale, SaleDetail, SalesChartPoint, SalesReport, Shift, ShopInfo, ShopUser, StaffReport, Supplier, SupplierStats, TodayAttendanceResponse, TopProduct, UpdateAttendanceRequest, UpdateCustomerBody, UpdateLeaveRequestBody, UpdateLeaveTypeRequest, UpdatePayrollRecordBody, UpdateProductBody, UpdateRolePermissionsBody, UpdateSalaryGradeBody, UpdateScheduleRequest, UpdateShiftRequest, UpdateShopBody, UpdateSupplierBody, UpdateUserAccessRequest, UpdateUserBody, User, UserAccessDetail, UserAccessListResponse, WeeklyScheduleResponse } from "./api.schemas";
+import type { AdjustInventoryBody, AnalyticsPeriodPoint, ApproveLeaveRequestBody, AttendanceListResponse, AttendanceRecord, AttendanceReportResponse, AuditLogsResponse, AuthResponse, CalendarScheduleResponse, Category, CheckInRequest, CheckOutRequest, CollectPaymentBody, CreateAttendanceRequest, CreateCategoryBody, CreateCustomRoleBody, CreateCustomerBody, CreateLeaveRequestBody, CreateLeaveTypeRequest, CreateProductBody, CreatePurchaseBody, CreateRotationPatternBody, CreateSalaryGradeBody, CreateSaleBody, CreateScheduleRequest, CreateShiftRequest, CreateSupplierBody, CustomRoleItem, Customer, DashboardSummary, DeleteEmployeesIdRotation200, DeleteRotationPatternsId200, DeleteSchedule200, DeleteShift200, DueReport, DutySchedule, EmployeeRotationAssignment, EmployeeRotationSchedule, ErrorResponse, GeneratePayroll201, GeneratePayrollBody, GetAttendanceReportParams, GetAuditLogsParams, GetCalendarScheduleParams, GetDashboardAnalyticsParams, GetEmployeePayrollHistoryParams, GetHrAnalyticsParams, GetPayrollStatsParams, GetProductReportParams, GetProfitReportParams, GetSalesReportParams, GetStaffReportParams, HealthStatus, HeatmapPoint, HrAnalytics, InventoryAdjustment, InventoryItem, InventoryReport, InviteUserBody, LeaveBalance, LeaveRequest, LeaveRequestListResponse, LeaveType, LedgerEntry, ListAttendanceParams, ListCustomersParams, ListLeaveBalancesParams, ListLeaveRequestsParams, ListPayrollParams, ListProductsParams, ListSalesParams, ListSchedulesParams, ListSuppliersParams, LoginBody, LogoutBody, MarkAllNotificationsRead200, MarkPayrollPaidBody, Notification, NotificationCount, OkResponse, PayPurchaseDueBody, PayrollRecord, PayrollStats, PostEmployeesIdRotationBody, Product, ProductReport, ProfitReport, Purchase, PurchaseDetail, PurchaseStats, PutRotationPatternsIdSlotsBody, RefreshBody, RefreshResponse, RegisterBody, RegisterPendingResponse, RejectLeaveRequestBody, RolePermissionsResponse, RotationPattern, RotationPatternSlot, RotationPatternWithSlots, SalaryGrade, Sale, SaleDetail, SalesChartPoint, SalesReport, Shift, ShopInfo, ShopUser, StaffReport, Supplier, SupplierStats, TodayAttendanceResponse, TopProduct, UpdateAttendanceRequest, UpdateCustomerBody, UpdateLeaveRequestBody, UpdateLeaveTypeRequest, UpdatePayrollRecordBody, UpdateProductBody, UpdateRolePermissionsBody, UpdateRotationPatternBody, UpdateSalaryGradeBody, UpdateScheduleRequest, UpdateShiftRequest, UpdateShopBody, UpdateSupplierBody, UpdateUserAccessRequest, UpdateUserBody, User, UserAccessDetail, UserAccessListResponse, WeeklyScheduleResponse } from "./api.schemas";
 import { customFetch } from "../custom-fetch";
 import type { ErrorType, BodyType } from "../custom-fetch";
 type AwaitedInput<T> = PromiseLike<T> | T;
@@ -2989,5 +2989,269 @@ export declare const useMarkPayrollPaid: <TError = ErrorType<unknown>, TContext 
     id: number;
     data: BodyType<MarkPayrollPaidBody>;
 }, TContext>;
+/**
+ * @summary List rotation patterns for the shop
+ */
+export declare const getGetRotationPatternsUrl: () => string;
+export declare const getRotationPatterns: (options?: RequestInit) => Promise<RotationPattern[]>;
+export declare const getGetRotationPatternsQueryKey: () => readonly ["/api/rotation-patterns"];
+export declare const getGetRotationPatternsQueryOptions: <TData = Awaited<ReturnType<typeof getRotationPatterns>>, TError = ErrorType<unknown>>(options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getRotationPatterns>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseQueryOptions<Awaited<ReturnType<typeof getRotationPatterns>>, TError, TData> & {
+    queryKey: QueryKey;
+};
+export type GetRotationPatternsQueryResult = NonNullable<Awaited<ReturnType<typeof getRotationPatterns>>>;
+export type GetRotationPatternsQueryError = ErrorType<unknown>;
+/**
+ * @summary List rotation patterns for the shop
+ */
+export declare function useGetRotationPatterns<TData = Awaited<ReturnType<typeof getRotationPatterns>>, TError = ErrorType<unknown>>(options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getRotationPatterns>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+};
+/**
+ * @summary Create a rotation pattern
+ */
+export declare const getPostRotationPatternsUrl: () => string;
+export declare const postRotationPatterns: (createRotationPatternBody: CreateRotationPatternBody, options?: RequestInit) => Promise<RotationPattern>;
+export declare const getPostRotationPatternsMutationOptions: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof postRotationPatterns>>, TError, {
+        data: BodyType<CreateRotationPatternBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationOptions<Awaited<ReturnType<typeof postRotationPatterns>>, TError, {
+    data: BodyType<CreateRotationPatternBody>;
+}, TContext>;
+export type PostRotationPatternsMutationResult = NonNullable<Awaited<ReturnType<typeof postRotationPatterns>>>;
+export type PostRotationPatternsMutationBody = BodyType<CreateRotationPatternBody>;
+export type PostRotationPatternsMutationError = ErrorType<unknown>;
+/**
+ * @summary Create a rotation pattern
+ */
+export declare const usePostRotationPatterns: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof postRotationPatterns>>, TError, {
+        data: BodyType<CreateRotationPatternBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationResult<Awaited<ReturnType<typeof postRotationPatterns>>, TError, {
+    data: BodyType<CreateRotationPatternBody>;
+}, TContext>;
+/**
+ * @summary Get a rotation pattern with its slots
+ */
+export declare const getGetRotationPatternsIdUrl: (id: number) => string;
+export declare const getRotationPatternsId: (id: number, options?: RequestInit) => Promise<RotationPatternWithSlots>;
+export declare const getGetRotationPatternsIdQueryKey: (id: number) => readonly [`/api/rotation-patterns/${number}`];
+export declare const getGetRotationPatternsIdQueryOptions: <TData = Awaited<ReturnType<typeof getRotationPatternsId>>, TError = ErrorType<unknown>>(id: number, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getRotationPatternsId>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseQueryOptions<Awaited<ReturnType<typeof getRotationPatternsId>>, TError, TData> & {
+    queryKey: QueryKey;
+};
+export type GetRotationPatternsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getRotationPatternsId>>>;
+export type GetRotationPatternsIdQueryError = ErrorType<unknown>;
+/**
+ * @summary Get a rotation pattern with its slots
+ */
+export declare function useGetRotationPatternsId<TData = Awaited<ReturnType<typeof getRotationPatternsId>>, TError = ErrorType<unknown>>(id: number, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getRotationPatternsId>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+};
+/**
+ * @summary Update a rotation pattern
+ */
+export declare const getPatchRotationPatternsIdUrl: (id: number) => string;
+export declare const patchRotationPatternsId: (id: number, updateRotationPatternBody: UpdateRotationPatternBody, options?: RequestInit) => Promise<RotationPattern>;
+export declare const getPatchRotationPatternsIdMutationOptions: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof patchRotationPatternsId>>, TError, {
+        id: number;
+        data: BodyType<UpdateRotationPatternBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationOptions<Awaited<ReturnType<typeof patchRotationPatternsId>>, TError, {
+    id: number;
+    data: BodyType<UpdateRotationPatternBody>;
+}, TContext>;
+export type PatchRotationPatternsIdMutationResult = NonNullable<Awaited<ReturnType<typeof patchRotationPatternsId>>>;
+export type PatchRotationPatternsIdMutationBody = BodyType<UpdateRotationPatternBody>;
+export type PatchRotationPatternsIdMutationError = ErrorType<unknown>;
+/**
+ * @summary Update a rotation pattern
+ */
+export declare const usePatchRotationPatternsId: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof patchRotationPatternsId>>, TError, {
+        id: number;
+        data: BodyType<UpdateRotationPatternBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationResult<Awaited<ReturnType<typeof patchRotationPatternsId>>, TError, {
+    id: number;
+    data: BodyType<UpdateRotationPatternBody>;
+}, TContext>;
+/**
+ * @summary Delete a rotation pattern
+ */
+export declare const getDeleteRotationPatternsIdUrl: (id: number) => string;
+export declare const deleteRotationPatternsId: (id: number, options?: RequestInit) => Promise<DeleteRotationPatternsId200>;
+export declare const getDeleteRotationPatternsIdMutationOptions: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteRotationPatternsId>>, TError, {
+        id: number;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationOptions<Awaited<ReturnType<typeof deleteRotationPatternsId>>, TError, {
+    id: number;
+}, TContext>;
+export type DeleteRotationPatternsIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteRotationPatternsId>>>;
+export type DeleteRotationPatternsIdMutationError = ErrorType<unknown>;
+/**
+ * @summary Delete a rotation pattern
+ */
+export declare const useDeleteRotationPatternsId: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteRotationPatternsId>>, TError, {
+        id: number;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationResult<Awaited<ReturnType<typeof deleteRotationPatternsId>>, TError, {
+    id: number;
+}, TContext>;
+/**
+ * @summary Bulk-replace all slots for a rotation pattern
+ */
+export declare const getPutRotationPatternsIdSlotsUrl: (id: number) => string;
+export declare const putRotationPatternsIdSlots: (id: number, putRotationPatternsIdSlotsBody: PutRotationPatternsIdSlotsBody, options?: RequestInit) => Promise<RotationPatternSlot[]>;
+export declare const getPutRotationPatternsIdSlotsMutationOptions: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof putRotationPatternsIdSlots>>, TError, {
+        id: number;
+        data: BodyType<PutRotationPatternsIdSlotsBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationOptions<Awaited<ReturnType<typeof putRotationPatternsIdSlots>>, TError, {
+    id: number;
+    data: BodyType<PutRotationPatternsIdSlotsBody>;
+}, TContext>;
+export type PutRotationPatternsIdSlotsMutationResult = NonNullable<Awaited<ReturnType<typeof putRotationPatternsIdSlots>>>;
+export type PutRotationPatternsIdSlotsMutationBody = BodyType<PutRotationPatternsIdSlotsBody>;
+export type PutRotationPatternsIdSlotsMutationError = ErrorType<unknown>;
+/**
+ * @summary Bulk-replace all slots for a rotation pattern
+ */
+export declare const usePutRotationPatternsIdSlots: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof putRotationPatternsIdSlots>>, TError, {
+        id: number;
+        data: BodyType<PutRotationPatternsIdSlotsBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationResult<Awaited<ReturnType<typeof putRotationPatternsIdSlots>>, TError, {
+    id: number;
+    data: BodyType<PutRotationPatternsIdSlotsBody>;
+}, TContext>;
+/**
+ * @summary Get the active rotation assignment for an employee
+ */
+export declare const getGetEmployeesIdRotationUrl: (id: number) => string;
+export declare const getEmployeesIdRotation: (id: number, options?: RequestInit) => Promise<EmployeeRotationAssignment>;
+export declare const getGetEmployeesIdRotationQueryKey: (id: number) => readonly [`/api/employees/${number}/rotation`];
+export declare const getGetEmployeesIdRotationQueryOptions: <TData = Awaited<ReturnType<typeof getEmployeesIdRotation>>, TError = ErrorType<unknown>>(id: number, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getEmployeesIdRotation>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseQueryOptions<Awaited<ReturnType<typeof getEmployeesIdRotation>>, TError, TData> & {
+    queryKey: QueryKey;
+};
+export type GetEmployeesIdRotationQueryResult = NonNullable<Awaited<ReturnType<typeof getEmployeesIdRotation>>>;
+export type GetEmployeesIdRotationQueryError = ErrorType<unknown>;
+/**
+ * @summary Get the active rotation assignment for an employee
+ */
+export declare function useGetEmployeesIdRotation<TData = Awaited<ReturnType<typeof getEmployeesIdRotation>>, TError = ErrorType<unknown>>(id: number, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getEmployeesIdRotation>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+};
+/**
+ * @summary Assign or replace the rotation pattern for an employee
+ */
+export declare const getPostEmployeesIdRotationUrl: (id: number) => string;
+export declare const postEmployeesIdRotation: (id: number, postEmployeesIdRotationBody: PostEmployeesIdRotationBody, options?: RequestInit) => Promise<EmployeeRotationAssignment>;
+export declare const getPostEmployeesIdRotationMutationOptions: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof postEmployeesIdRotation>>, TError, {
+        id: number;
+        data: BodyType<PostEmployeesIdRotationBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationOptions<Awaited<ReturnType<typeof postEmployeesIdRotation>>, TError, {
+    id: number;
+    data: BodyType<PostEmployeesIdRotationBody>;
+}, TContext>;
+export type PostEmployeesIdRotationMutationResult = NonNullable<Awaited<ReturnType<typeof postEmployeesIdRotation>>>;
+export type PostEmployeesIdRotationMutationBody = BodyType<PostEmployeesIdRotationBody>;
+export type PostEmployeesIdRotationMutationError = ErrorType<unknown>;
+/**
+ * @summary Assign or replace the rotation pattern for an employee
+ */
+export declare const usePostEmployeesIdRotation: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof postEmployeesIdRotation>>, TError, {
+        id: number;
+        data: BodyType<PostEmployeesIdRotationBody>;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationResult<Awaited<ReturnType<typeof postEmployeesIdRotation>>, TError, {
+    id: number;
+    data: BodyType<PostEmployeesIdRotationBody>;
+}, TContext>;
+/**
+ * @summary Remove the active rotation assignment for an employee
+ */
+export declare const getDeleteEmployeesIdRotationUrl: (id: number) => string;
+export declare const deleteEmployeesIdRotation: (id: number, options?: RequestInit) => Promise<DeleteEmployeesIdRotation200>;
+export declare const getDeleteEmployeesIdRotationMutationOptions: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteEmployeesIdRotation>>, TError, {
+        id: number;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationOptions<Awaited<ReturnType<typeof deleteEmployeesIdRotation>>, TError, {
+    id: number;
+}, TContext>;
+export type DeleteEmployeesIdRotationMutationResult = NonNullable<Awaited<ReturnType<typeof deleteEmployeesIdRotation>>>;
+export type DeleteEmployeesIdRotationMutationError = ErrorType<unknown>;
+/**
+ * @summary Remove the active rotation assignment for an employee
+ */
+export declare const useDeleteEmployeesIdRotation: <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+    mutation?: UseMutationOptions<Awaited<ReturnType<typeof deleteEmployeesIdRotation>>, TError, {
+        id: number;
+    }, TContext>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseMutationResult<Awaited<ReturnType<typeof deleteEmployeesIdRotation>>, TError, {
+    id: number;
+}, TContext>;
+/**
+ * @summary Get the computed effective rotation schedule for an employee
+ */
+export declare const getGetEmployeesIdRotationScheduleUrl: (id: number) => string;
+export declare const getEmployeesIdRotationSchedule: (id: number, options?: RequestInit) => Promise<EmployeeRotationSchedule>;
+export declare const getGetEmployeesIdRotationScheduleQueryKey: (id: number) => readonly [`/api/employees/${number}/rotation-schedule`];
+export declare const getGetEmployeesIdRotationScheduleQueryOptions: <TData = Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>, TError = ErrorType<unknown>>(id: number, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}) => UseQueryOptions<Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>, TError, TData> & {
+    queryKey: QueryKey;
+};
+export type GetEmployeesIdRotationScheduleQueryResult = NonNullable<Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>>;
+export type GetEmployeesIdRotationScheduleQueryError = ErrorType<unknown>;
+/**
+ * @summary Get the computed effective rotation schedule for an employee
+ */
+export declare function useGetEmployeesIdRotationSchedule<TData = Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>, TError = ErrorType<unknown>>(id: number, options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof getEmployeesIdRotationSchedule>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+};
 export {};
 //# sourceMappingURL=api.d.ts.map
