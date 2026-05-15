@@ -26,7 +26,7 @@ function DayCell({
   assignments: CalendarDayAssignment[];
   isCurrentMonth: boolean;
 }) {
-  const { t }  = useTranslation();
+  const { t, i18n }  = useTranslation();
   const day    = parseInt(date.split("-")[2], 10);
   const isWeekend = weekday === 5 || weekday === 6;
   const today  = new Date().toISOString().split("T")[0];
@@ -68,19 +68,24 @@ function DayCell({
 
           {/* Shift assignments preview */}
           <div className="space-y-0.5">
-            {preview.map((a) => (
-              <div
-                key={a.employeeId}
-                className="text-[10px] px-1.5 py-0.5 rounded truncate font-medium"
-                style={{
-                  backgroundColor: (a.shiftColor ?? "#6366f1") + "25",
-                  color: a.shiftColor ?? "#6366f1",
-                }}
-              >
-                {a.employeeName.split(" ")[0]}
-                {a.shiftNameBn && <span className="opacity-70 ml-1">·{a.shiftNameBn}</span>}
-              </div>
-            ))}
+            {preview.map((a) => {
+              const shiftLabel = i18n.language === "bn"
+                ? (a.shiftNameBn ?? a.shiftName)
+                : (a.shiftName ?? a.shiftNameBn);
+              return (
+                <div
+                  key={a.employeeId}
+                  className="text-[10px] px-1.5 py-0.5 rounded truncate font-medium"
+                  style={{
+                    backgroundColor: (a.shiftColor ?? "#6366f1") + "25",
+                    color: a.shiftColor ?? "#6366f1",
+                  }}
+                >
+                  {a.employeeName.split(" ")[0]}
+                  {shiftLabel && <span className="opacity-70 ml-1">·{shiftLabel}</span>}
+                </div>
+              );
+            })}
             {extra > 0 && (
               <p className="text-[10px] text-muted-foreground pl-1">+{extra} {t("schedule.more")}</p>
             )}
@@ -92,7 +97,11 @@ function DayCell({
         <PopoverContent className="w-64 p-3" align="start">
           <p className="text-sm font-semibold mb-2">{date}</p>
           <div className="space-y-1.5">
-            {assignments.map((a) => (
+            {assignments.map((a) => {
+              const shiftLabel = i18n.language === "bn"
+                ? (a.shiftNameBn ?? a.shiftName)
+                : (a.shiftName ?? a.shiftNameBn);
+              return (
               <div key={a.employeeId} className="flex items-center gap-2 text-sm">
                 <span
                   className="h-2.5 w-2.5 rounded-full shrink-0"
@@ -106,13 +115,13 @@ function DayCell({
                     color: a.isHoliday ? "#ef4444" : (a.shiftColor ?? "#6366f1"),
                   }}
                 >
-                  {a.isHoliday ? t("schedule.holiday") : (a.shiftNameBn ?? a.shiftName ?? "—")}
+                  {a.isHoliday ? t("schedule.holiday") : (shiftLabel ?? "—")}
                 </span>
                 {a.isOverride && (
                   <Badge variant="outline" className="text-[9px] px-1 h-3.5">{t("schedule.override")}</Badge>
                 )}
               </div>
-            ))}
+            ); })}
           </div>
         </PopoverContent>
       )}

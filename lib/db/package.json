@@ -8,13 +8,14 @@
     "./schema": "./src/schema/index.ts"
   },
   "scripts": {
-    "push":         "drizzle-kit push --config ./drizzle.config.ts",
-    "push-force":   "drizzle-kit push --force --config ./drizzle.config.ts",
-    "generate":     "drizzle-kit generate --config ./drizzle.config.ts",
-    "migrate":      "drizzle-kit migrate --config ./drizzle.config.ts",
-    "studio":       "drizzle-kit studio --config ./drizzle.config.ts",
-    "seed:leaves":    "tsx scripts/seed-leave-types.ts",
-    "migrate:leaves": "tsx scripts/migrate-leave-types.ts"
+    "push": "drizzle-kit push --config ./drizzle.config.ts",
+    "push-force": "drizzle-kit push --force --config ./drizzle.config.ts",
+    "generate": "drizzle-kit generate --config ./drizzle.config.ts",
+    "migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
+    "studio": "drizzle-kit studio --config ./drizzle.config.ts",
+    "seed:leaves": "tsx scripts/seed-leave-types.ts",
+    "migrate:leaves": "tsx scripts/migrate-leave-types.ts",
+    "seed:shifts": "tsx scripts/seed-default-shifts.ts"
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/pg": "^8.18.0",
-    "drizzle-kit": "^0.31.9"
+    "drizzle-kit": "^0.31.9",
+    "tsx": "catalog:"
   }
 }

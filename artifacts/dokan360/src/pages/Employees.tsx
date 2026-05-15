@@ -4,7 +4,7 @@ import { useLocale } from "@/hooks/useLocale";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { customFetch, getListShopUsersQueryKey } from "@workspace/api-client-react";
+import { customFetch, getListShopUsersQueryKey, useListShifts, getGetWeeklyScheduleQueryKey } from "@workspace/api-client-react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
@@ -218,6 +218,19 @@ async function fetchNextEmployeeCode(): Promise<string> {
 type SalaryGradeOption = { id: number; name: string; isDefault: boolean };
 async function fetchSalaryGrades(): Promise<SalaryGradeOption[]> {
   return customFetch<SalaryGradeOption[]>("/api/salary-grades");
+}
+
+async function apiCreateScheduleEntry(data: {
+  employeeId: number;
+  shiftId: number;
+  type: "weekly";
+  weekday: number;
+}) {
+  return customFetch<void>("/api/schedules", {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 type UserRoleOption = {
@@ -504,7 +517,11 @@ function EmployeeFormDialog({
     staleTime: 5 * 60 * 1000,
   });
 
+  /* Fetch active shifts for default shift dropdown (new employee only) */
+  const { data: availableShifts = [] } = useListShifts();
+
   const [form, setForm] = useState<EmployeeForm>(EMPTY_FORM);
+  const [defaultShiftId, setDefaultShiftId] = useState<string>("");
 
   /* POS access state — create mode */
   const [posAccess, setPosAccess] = useState(false);
@@ -561,6 +578,7 @@ function EmployeeFormDialog({
       });
     } else {
       setForm(EMPTY_FORM);
+      setDefaultShiftId("");
       setPosAccess(false);
       setPosEmail("");
       setPosPassword("");
@@ -688,7 +706,21 @@ function EmployeeFormDialog({
         const fullPayload = posAccess
           ? { ...payload, posAccess: { email: posEmail.trim(), password: posPassword, role: posRole } }
           : payload;
-        await createMut.mutateAsync(fullPayload);
+        const created = await createMut.mutateAsync(fullPayload);
+        /* Auto-assign default shift Mon–Fri if selected */
+        if (defaultShiftId && created.id) {
+          await Promise.allSettled(
+            [1, 2, 3, 4, 5].map((weekday) =>
+              apiCreateScheduleEntry({
+                employeeId: created.id,
+                shiftId:    Number(defaultShiftId),
+                type:       "weekly",
+                weekday,
+              }),
+            ),
+          );
+          qc.invalidateQueries({ queryKey: getGetWeeklyScheduleQueryKey() });
+        }
         if (posAccess) {
           qc.invalidateQueries({ queryKey: getListShopUsersQueryKey() });
           toast({ title: t("employees.posUserCreated") });
@@ -936,6 +968,36 @@ function EmployeeFormDialog({
                   <Input className="h-10 rounded-xl border-border/70 text-sm" type="date"
                     value={form.joiningDate} onChange={onInput("joiningDate")} />
                 </div>
+                {/* Default Shift — new employee only */}
+                {isNew && (
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <div className="flex items-center gap-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">{t("employees.defaultShift")}</Label>
+                      <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
+                        {t("common.optional")}
+                      </span>
+                    </div>
+                    <Select
+                      value={defaultShiftId || "__none__"}
+                      onValueChange={(v) => setDefaultShiftId(v === "__none__" ? "" : v)}
+                    >
+                      <SelectTrigger className="h-10 rounded-xl border-border/70 text-sm">
+                        <SelectValue placeholder={t("employees.noShift")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__none__">{t("employees.noShift")}</SelectItem>
+                        {availableShifts.filter((s) => s.isActive).map((s) => (
+                          <SelectItem key={s.id} value={String(s.id)}>
+                            {s.nameBn} ({s.startTime}–{s.endTime})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {defaultShiftId && (
+                      <p className="text-xs text-muted-foreground">{t("employees.defaultShiftDesc")}</p>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

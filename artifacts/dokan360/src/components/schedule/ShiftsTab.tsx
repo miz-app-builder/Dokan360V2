@@ -63,7 +63,7 @@ const DEFAULT_FORM: ShiftFormData = {
 };
 
 export function ShiftsTab() {
-  const { t }         = useTranslation();
+  const { t, i18n }   = useTranslation();
   const { toast }     = useToast();
   const queryClient   = useQueryClient();
 
@@ -173,8 +173,12 @@ export function ShiftsTab() {
                       <ShiftIcon startTime={shift.startTime} />
                     </div>
                     <div>
-                      <p className="font-semibold text-sm leading-tight">{shift.nameBn}</p>
-                      <p className="text-xs text-muted-foreground">{shift.name}</p>
+                      <p className="font-semibold text-sm leading-tight">
+                        {i18n.language === "bn" ? shift.nameBn : shift.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {i18n.language === "bn" ? shift.name : shift.nameBn}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

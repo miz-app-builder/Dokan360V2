@@ -35,14 +35,33 @@ function ShiftPicker({
 }: {
   slot: WeeklyDaySlot;
   shifts: Shift[];
-  onAssign: (shiftId: number) => void;
+  onAssign: (shiftId: number | null) => void;
   onRemove: () => void;
   isLoading: boolean;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [open, setOpen] = useState(false);
 
   if (slot.scheduleId) {
+    if (!slot.shiftId) {
+      return (
+        <div className="group relative flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all bg-red-500/10 text-red-600 border border-red-500/20">
+          <span className="truncate max-w-[70px]">{t("schedule.dayOff")}</span>
+          <button
+            className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={(e) => { e.stopPropagation(); onRemove(); }}
+            disabled={isLoading}
+          >
+            {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <X className="h-3 w-3" />}
+          </button>
+        </div>
+      );
+    }
+
+    const displayName = i18n.language === "bn"
+      ? (slot.shiftNameBn ?? slot.shiftName ?? "—")
+      : (slot.shiftName ?? slot.shiftNameBn ?? "—");
+
     return (
       <div
         className="group relative flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all"
@@ -52,7 +71,7 @@ function ShiftPicker({
           border: `1px solid ${slot.shiftColor ?? "#6366f1"}40`,
         }}
       >
-        <span className="truncate max-w-[70px]">{slot.shiftNameBn ?? slot.shiftName ?? "—"}</span>
+        <span className="truncate max-w-[70px]">{displayName}</span>
         <button
           className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
           onClick={(e) => { e.stopPropagation(); onRemove(); }}
@@ -71,12 +90,18 @@ function ShiftPicker({
           <Plus className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-44 p-1.5" align="center">
+      <PopoverContent className="w-48 p-1.5" align="center">
         <p className="text-xs font-medium px-2 py-1 text-muted-foreground">{t("schedule.assignShift")}</p>
-        {shifts.length === 0 ? (
-          <p className="text-xs text-center py-3 text-muted-foreground">{t("schedule.noShifts")}</p>
-        ) : (
-          <div className="space-y-0.5">
+        <button
+          className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950/30 text-sm transition-colors text-left"
+          onClick={() => { onAssign(null); setOpen(false); }}
+          disabled={isLoading}
+        >
+          <span className="h-2.5 w-2.5 rounded-full shrink-0 bg-red-500" />
+          <span className="truncate text-red-600 font-medium">{t("schedule.dayOff")}</span>
+        </button>
+        {shifts.length > 0 && (
+          <div className="border-t border-border/50 mt-1 pt-1 space-y-0.5">
             {shifts.map((s) => (
               <button
                 key={s.id}
@@ -85,10 +110,15 @@ function ShiftPicker({
                 disabled={isLoading}
               >
                 <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-                <span className="truncate">{s.nameBn}</span>
+                <span className="truncate">
+                  {i18n.language === "bn" ? s.nameBn : s.name}
+                </span>
               </button>
             ))}
           </div>
+        )}
+        {shifts.length === 0 && (
+          <p className="text-xs text-center py-3 text-muted-foreground">{t("schedule.noShifts")}</p>
         )}
       </PopoverContent>
     </Popover>
@@ -109,12 +139,17 @@ export function WeeklyScheduleTab() {
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: getGetWeeklyScheduleQueryKey() });
 
-  async function handleAssign(employeeId: number, weekday: number, shiftId: number) {
+  async function handleAssign(employeeId: number, weekday: number, shiftId: number | null) {
     const key = `${employeeId}-${weekday}`;
     setLoadingKey(key);
     try {
       await createMut.mutateAsync({
-        data: { employeeId, shiftId, type: "weekly", weekday },
+        data: {
+          employeeId,
+          ...(shiftId !== null && { shiftId }),
+          type: "weekly" as const,
+          weekday,
+        },
       });
       toast({ title: t("schedule.assignSuccess") });
       invalidate();
@@ -169,7 +204,6 @@ export function WeeklyScheduleTab() {
 
   return (
     <div className="space-y-4">
-      {/* Legend */}
       {shifts.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {shifts.map((s) => (
@@ -185,7 +219,6 @@ export function WeeklyScheduleTab() {
       <Card>
         <ScrollArea className="w-full">
           <div className="min-w-[640px]">
-            {/* Header row */}
             <div className="grid border-b" style={{ gridTemplateColumns: "180px repeat(7, 1fr)" }}>
               <div className="px-4 py-2.5 text-xs font-semibold text-muted-foreground border-r">
                 {t("employees.name")}
@@ -203,7 +236,6 @@ export function WeeklyScheduleTab() {
               ))}
             </div>
 
-            {/* Employee rows */}
             {rows.map((row, idx) => (
               <div
                 key={row.employeeId}
@@ -213,7 +245,6 @@ export function WeeklyScheduleTab() {
                 )}
                 style={{ gridTemplateColumns: "180px repeat(7, 1fr)" }}
               >
-                {/* Employee name */}
                 <div className="px-4 py-2.5 border-r flex flex-col justify-center min-h-[52px]">
                   <p className="text-sm font-medium truncate">{row.employeeName}</p>
                   {row.employeeCode && (
@@ -221,7 +252,6 @@ export function WeeklyScheduleTab() {
                   )}
                 </div>
 
-                {/* Day cells */}
                 {row.days.map((slot: WeeklyDaySlot) => {
                   const cellKey = `${row.employeeId}-${slot.weekday}`;
                   const isProcessing = loadingKey === cellKey;
